@@ -1,0 +1,29 @@
+@using Phazor.Components.Tools
+@namespace Phazor.Components
+@inherits PhazorComponent
+
+<span id="@ElementId" class="@Class" style="@Style">
+    @_value
+</span>
+
+
+@code {
+
+    private string? _value;
+
+    [Parameter]
+    public BoundValue<string> Value { get; set; }
+
+    [Parameter]
+    public string? StaticValue
+    {
+        get => _value;
+        set => _value = value;
+    }
+
+    protected override IDisposable GenerateDisposable()
+    {
+        return Value.Subscribe(x => _value = x);
+    }
+
+}

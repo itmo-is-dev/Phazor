@@ -5,6 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);CA1720;</NoWarn>
+    </PropertyGroup>
 
     <PropertyGroup>
         <AnalysisLevel>latest</AnalysisLevel>

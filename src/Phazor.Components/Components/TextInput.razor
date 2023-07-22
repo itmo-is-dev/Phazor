@@ -1,0 +1,13 @@
+@using Phazor.Components.Extensions
+
+@namespace Phazor.Components
+
+@inherits PhazorComponent
+
+<input id="@ElementId"
+       value="@_value"
+       type="@(Type.ToDisplayString())" 
+       inputmode="@(Mode.ToDisplayString())"
+       readonly="@ReadOnly"
+       oninput="@OnInputAsync" 
+       onkeyup="@OnKeyUpAsync"/>
