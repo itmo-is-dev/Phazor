@@ -77,13 +77,9 @@ jobs:
           path: .packages
           key: ${{ needs.build.outputs.cache-key }}
 
-      - name: configure GitHub nuget repository
-        run: |
-          dotnet nuget update source nuget.org --username itmo-is-dev --password ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text
-
       - name: publish to GitHub nuget repository
         run: |
           for file in .packages/*.nupkg
           do
-            dotnet nuget push "${file#/}" --source "nuget.org"
+            dotnet nuget push "${file#/}" --source "nuget.org" --apiKey ${{ secrets.NUGET_TOKEN }}
           done
