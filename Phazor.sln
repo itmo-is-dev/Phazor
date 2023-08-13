@@ -15,6 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{34F710
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phazor.Sample", "sample\Phazor.Sample\Phazor.Sample.csproj", "{1F3C9FA4-F502-4380-ACDD-A1B9FA4DF467}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0DDC8B34-EFF9-4F90-9F44-3F838D630582}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +28,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{058DCBB8-B2A4-4FBF-B874-F434D6BA05C3} = {C0F3268B-A182-4D7D-9D25-FBA6AD39BF3B}
 		{1F3C9FA4-F502-4380-ACDD-A1B9FA4DF467} = {34F71048-E0AD-45DF-8660-7C9DEE66CA1F}
+		{0DDC8B34-EFF9-4F90-9F44-3F838D630582} = {EF32B1CC-B6F7-460F-9A4D-77D976E298E6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{058DCBB8-B2A4-4FBF-B874-F434D6BA05C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
