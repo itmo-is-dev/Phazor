@@ -79,7 +79,7 @@ jobs:
 
       - name: configure GitHub nuget repository
         run: |
-          dotnet nuget add source --username itmo-is-dev --password ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text --name nuget "https://api.nuget.org/v3/index.json"
+          dotnet nuget update source --username itmo-is-dev --password ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text --name nuget "https://api.nuget.org/v3/index.json"
 
       - name: publish to GitHub nuget repository
         run: |
