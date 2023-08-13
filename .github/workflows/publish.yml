@@ -60,7 +60,7 @@ jobs:
         run: |
           rm -rf .packages
           mkdir .packages
-          mv src/Phazor/bin/Release/*.nupkg .packages/
+          mv src/Phazor.Components/bin/Release/*.nupkg .packages/
   
   
   publish:

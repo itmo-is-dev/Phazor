@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Title>Phazor</Title>
+        <Title>Phazor.Components</Title>
         <Authors>itmo-is-dev</Authors>
         <PackageProjectUrl>https://github.com/itmo-is-dev/Phazor</PackageProjectUrl>
         <RepositoryUrl>https://github.com/itmo-is-dev/Phazor</RepositoryUrl>
