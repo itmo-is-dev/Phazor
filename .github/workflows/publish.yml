@@ -85,5 +85,5 @@ jobs:
         run: |
           for file in .packages/*.nupkg
           do
-            dotnet nuget push "${file#/}" --source "nuget"
+            dotnet nuget push "${file#/}" --source "nuget.org"
           done
