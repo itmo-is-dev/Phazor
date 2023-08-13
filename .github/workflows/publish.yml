@@ -81,5 +81,5 @@ jobs:
         run: |
           for file in .packages/*.nupkg
           do
-            dotnet nuget push "${file#/}" --source "nuget.org" --apiKey ${{ secrets.NUGET_TOKEN }}
+            dotnet nuget push "${file#/}" --source "nuget.org" --api-key ${{ secrets.NUGET_TOKEN }}
           done
