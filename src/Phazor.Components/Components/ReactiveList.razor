@@ -1,0 +1,54 @@
+@namespace Phazor.Components
+@inherits PhazorComponent
+@using Phazor.Components.Tools
+@using Phazor.Components.Extensions
+@typeparam T
+
+<div id="@ElementId" class="@Class" style="@Style">
+    @if (_elements is not null && Fragment is not null)
+    {
+        @foreach (var element in _elements)
+        {
+            Fragment.Invoke(element);
+        }
+    }
+</div>
+
+@code {
+
+    private IDisposable? _elementsSubscription;
+    private IEnumerable<T>? _elements;
+
+    [Parameter]
+    public BoundValue<IEnumerable<T>> Elements { get; set; }
+
+    [Parameter]
+    public RenderFragment<T>? Fragment { get; set; }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (disposing)
+        {
+            _elementsSubscription?.Dispose();
+        }
+    }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetUpdatedValue(nameof(Elements), Elements, out BoundValue<IEnumerable<T>>? elements))
+        {
+            _elementsSubscription?.Dispose();
+
+            _elementsSubscription = elements.Value.Subscribe(x =>
+            {
+                _elements = x;
+                StateHasChanged();
+            });
+        }
+
+        return base.SetParametersAsync(parameters);
+    }
+
+}

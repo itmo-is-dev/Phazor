@@ -1,19 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <IsPackable>true</IsPackable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Title>Phazor</Title>
+        <Authors>itmo-is-dev</Authors>
+        <PackageProjectUrl>https://github.com/itmo-is-dev/Phazor</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/itmo-is-dev/Phazor</RepositoryUrl>
+        <RepositoryType>github</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PatchVersion>0</PatchVersion>
+        <Version>1.0.$(PatchVersion)</Version>
+        <PackageReleaseNotes>
+            Added components
+        </PackageReleaseNotes>
+    </PropertyGroup>
 
     <ItemGroup>
         <SupportedPlatform Include="browser" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
         <PackageReference Include="System.Reactive" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
