@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <IsPackable>true</IsPackable>
@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Title>Phazor.Components</Title>
+        <Title>Phazor.Extensions</Title>
         <Authors>itmo-is-dev</Authors>
         <PackageProjectUrl>https://github.com/itmo-is-dev/Phazor</PackageProjectUrl>
         <RepositoryUrl>https://github.com/itmo-is-dev/Phazor</RepositoryUrl>
@@ -18,18 +18,9 @@
         <PatchVersion>0</PatchVersion>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Fixed ReactiveForEach
+            Added disposable extensions
         </PackageReleaseNotes>
     </PropertyGroup>
-
-    <ItemGroup>
-        <SupportedPlatform Include="browser" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
-        <PackageReference Include="System.Reactive" />
-    </ItemGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
