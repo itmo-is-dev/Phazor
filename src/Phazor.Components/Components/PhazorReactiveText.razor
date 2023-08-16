@@ -1,13 +1,13 @@
 @using Phazor.Components.Tools
+@using Phazor.Components.Extensions
 @namespace Phazor.Components
-@inherits PhazorComponent
 
-<span id="@ElementId" class="@Class" style="@Style">
-    @_value
-</span>
+@_value
 
 
 @code {
+
+    private IDisposable? _disposable;
 
     private string? _value;
 
@@ -21,9 +21,10 @@
         set => _value = value;
     }
 
-    protected override IDisposable GenerateDisposable()
+    protected override void OnParametersSet()
     {
-        return Value.Subscribe(x => _value = x);
+        _disposable?.Dispose();
+        _disposable = Value.Subscribe(x => _value = x);
     }
 
 }

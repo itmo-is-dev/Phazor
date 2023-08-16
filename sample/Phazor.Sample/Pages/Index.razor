@@ -1,36 +1,6 @@
 ﻿@page "/"
-@using System.Reactive.Subjects
-@using Phazor.Components.Extensions
 
-<h1>Hello, world!</h1>
-
-<TextInput TextSubmitted="OnSubmitted" 
-           ReadOnly="_readOnly" 
-           DebounceDelay="@(TimeSpan.FromMilliseconds(500))" 
-           TextChanged="x => Console.WriteLine(x)"
-           Value="_value.Bind()"/>
-
-<button onclick="@HandleClick"></button>
-
-@code {
-
-    private readonly Subject<string> _value = new Subject<string>();
-
-    private bool _readOnly;
-
-    public async Task OnSubmitted(string value)
-    {
-        _readOnly = true;
-
-        await Task.Delay(TimeSpan.FromSeconds(2));
-
-        Console.WriteLine($"submitted text: {value}");
-
-        _readOnly = false;
-    }
-
-    public void HandleClick()
-    {
-        _value.OnNext("aboba");
-    }
-}
+<div style="display: flex; flex-direction: column">
+    <a href="/ReactiveForEach">ReactiveForEach</a>
+    <a href="/ReactiveText">ReactiveText</a>
+</div>

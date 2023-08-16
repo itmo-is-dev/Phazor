@@ -6,11 +6,11 @@
     Add value
 </button>
 
-<ReactiveForEach Elements="_subject.Bind()">
+<PhazorReactiveForEach Elements="_subject.Bind()">
     <Fragment Context="value">
         <span>@value</span>
     </Fragment>
-</ReactiveForEach>
+</PhazorReactiveForEach>
 
 
 @code {
