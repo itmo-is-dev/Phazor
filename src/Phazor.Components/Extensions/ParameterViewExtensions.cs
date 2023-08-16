@@ -11,7 +11,7 @@ internal static class ParameterViewExtensions
         T oldValue,
         [NotNullWhen(true)] out T? value)
     {
-        return parameters.TryGetValue(parameterName, out value) && oldValue?.Equals(value) is false;
+        return parameters.TryGetValue(parameterName, out value) && ReferenceEquals(oldValue, value) is false;
     }
 
     public static bool TryGetUpdatedValue<T>(
