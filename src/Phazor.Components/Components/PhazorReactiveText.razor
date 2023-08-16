@@ -4,7 +4,6 @@
 
 @_value
 
-
 @code {
 
     private IDisposable? _disposable;
@@ -24,7 +23,11 @@
     protected override void OnParametersSet()
     {
         _disposable?.Dispose();
-        _disposable = Value.Subscribe(x => _value = x);
+        _disposable = Value.Subscribe(x =>
+        {
+            _value = x;
+            StateHasChanged();
+        });
     }
 
 }
