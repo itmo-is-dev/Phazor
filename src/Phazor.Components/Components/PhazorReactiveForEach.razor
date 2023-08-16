@@ -1,7 +1,7 @@
 @namespace Phazor.Components
-@inherits PhazorComponent
 @using Phazor.Components.Tools
 @using Phazor.Components.Extensions
+@implements IDisposable
 @typeparam T
 
 @if (_elements is not null && Fragment is not null)
@@ -23,14 +23,9 @@
     [Parameter]
     public RenderFragment<T>? Fragment { get; set; }
 
-    protected override void Dispose(bool disposing)
+    public void Dispose()
     {
-        base.Dispose(disposing);
-
-        if (disposing)
-        {
-            _elementsSubscription?.Dispose();
-        }
+        _elementsSubscription?.Dispose();
     }
 
     public override Task SetParametersAsync(ParameterView parameters)

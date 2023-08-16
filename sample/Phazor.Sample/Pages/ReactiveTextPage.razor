@@ -1,0 +1,20 @@
+@page "/ReactiveText"
+@using System.Reactive.Subjects
+@using Phazor.Components.Extensions
+
+<button onclick="@Clicked">Increment</button>
+
+<PhazorReactiveText Value="_value.Bind()"/>
+
+
+@code {
+    private int _counter;
+
+    private readonly Subject<string> _value = new Subject<string>();
+
+    private void Clicked()
+    {
+        _value.OnNext(_counter++.ToString());
+    }
+
+}
