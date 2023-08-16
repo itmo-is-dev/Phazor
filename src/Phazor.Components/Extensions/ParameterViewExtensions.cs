@@ -9,9 +9,9 @@ internal static class ParameterViewExtensions
         this ParameterView parameters,
         string parameterName,
         T oldValue,
-        [NotNullWhen(true)] out T? value) where T : class, IEquatable<T>
+        [NotNullWhen(true)] out T? value)
     {
-        return parameters.TryGetValue(parameterName, out value) && oldValue.Equals(value) is false;
+        return parameters.TryGetValue(parameterName, out value) && oldValue?.Equals(value) is false;
     }
 
     public static bool TryGetUpdatedValue<T>(

@@ -1,10 +1,9 @@
 @page "/ReactiveText"
 @using System.Reactive.Subjects
-@using Phazor.Components.Extensions
 
 <button onclick="@Clicked">Increment</button>
 
-<PhazorReactiveText Value="_value.Bind()"/>
+<PhazorReactiveText Value="_value"/>
 
 
 @code {

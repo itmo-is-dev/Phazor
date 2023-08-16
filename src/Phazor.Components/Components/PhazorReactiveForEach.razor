@@ -18,7 +18,7 @@
     private IEnumerable<T>? _elements;
 
     [Parameter]
-    public BoundValue<IEnumerable<T>> Elements { get; set; }
+    public IObservable<IEnumerable<T>>? Elements { get; set; }
 
     [Parameter]
     public RenderFragment<T>? Fragment { get; set; }
@@ -30,11 +30,11 @@
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
-        if (parameters.TryGetUpdatedValue(nameof(Elements), Elements, out BoundValue<IEnumerable<T>>? elements))
+        if (parameters.TryGetUpdatedValue(nameof(Elements), Elements, out IObservable<IEnumerable<T>>? elements))
         {
             _elementsSubscription?.Dispose();
 
-            _elementsSubscription = elements.Value.Subscribe(x =>
+            _elementsSubscription = elements?.Subscribe(x =>
             {
                 _elements = x;
                 StateHasChanged();

@@ -11,19 +11,13 @@
     private string? _value;
 
     [Parameter]
-    public BoundValue<string> Value { get; set; }
-
-    [Parameter]
-    public string? StaticValue
-    {
-        get => _value;
-        set => _value = value;
-    }
+    public IObservable<string>? Value { get; set; }
 
     protected override void OnParametersSet()
     {
         _disposable?.Dispose();
-        _disposable = Value.Subscribe(x =>
+
+        _disposable = Value?.Subscribe(x =>
         {
             _value = x;
             StateHasChanged();
