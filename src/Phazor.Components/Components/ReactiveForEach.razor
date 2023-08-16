@@ -4,15 +4,13 @@
 @using Phazor.Components.Extensions
 @typeparam T
 
-<div id="@ElementId" class="@Class" style="@Style">
-    @if (_elements is not null && Fragment is not null)
+@if (_elements is not null && Fragment is not null)
+{
+    @foreach (var element in _elements)
     {
-        @foreach (var element in _elements)
-        {
-            Fragment.Invoke(element);
-        }
+        @Fragment.Invoke(element)
     }
-</div>
+}
 
 @code {
 
