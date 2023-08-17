@@ -1,0 +1,23 @@
+@page "/ReactiveValue"
+@using System.Reactive.Subjects
+
+<button onclick="@OnClick">Increment</button>
+
+<PhazorReactiveValue Value="_subject">
+    <Fragment Context="value">
+        Value = @value
+    </Fragment>
+</PhazorReactiveValue>
+
+@code {
+
+    private readonly Subject<int> _subject = new Subject<int>();
+
+    private int _value;
+
+    private void OnClick()
+    {
+        _subject.OnNext(++_value);
+    }
+
+}
