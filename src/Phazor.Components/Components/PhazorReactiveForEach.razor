@@ -4,11 +4,11 @@
 @implements IDisposable
 @typeparam T
 
-@if (_elements is not null && Fragment is not null)
+@if (_elements is not null && ChildContent is not null)
 {
     @foreach (var element in _elements)
     {
-        @Fragment.Invoke(element)
+        @ChildContent.Invoke(element)
     }
 }
 
@@ -21,7 +21,7 @@
     public IObservable<IEnumerable<T>>? Elements { get; set; }
 
     [Parameter]
-    public RenderFragment<T>? Fragment { get; set; }
+    public RenderFragment<T>? ChildContent { get; set; }
 
     public void Dispose()
     {

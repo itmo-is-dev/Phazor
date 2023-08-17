@@ -1,15 +1,12 @@
 @page "/ReactiveForEach"
 @using System.Reactive.Subjects
-@using Phazor.Components.Extensions
 
 <button onclick="@OnClick">
     Add value
 </button>
 
-<PhazorReactiveForEach Elements="_subject">
-    <Fragment Context="value">
-        <span>@value</span>
-    </Fragment>
+<PhazorReactiveForEach Elements="_subject" Context="value">
+    <span>@value</span>
 </PhazorReactiveForEach>
 
 

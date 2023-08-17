@@ -1,10 +1,9 @@
 @namespace Phazor.Components
-@using Phazor.Components.Extensions
 @typeparam T
 
-@if (_value is not null && Fragment is not null)
+@if (_value is not null && ChildContent is not null)
 {
-    @Fragment.Invoke(_value)
+    @ChildContent.Invoke(_value)
 }
 
 @code {
@@ -17,7 +16,7 @@
     public IObservable<T>? Value { get; set; }
 
     [Parameter]
-    public RenderFragment<T>? Fragment { get; set; }
+    public RenderFragment<T>? ChildContent { get; set; }
 
     protected override void OnParametersSet()
     {
