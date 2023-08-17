@@ -1,0 +1,32 @@
+@namespace Phazor.Components
+@typeparam T
+
+@if (ChildContent is not null)
+{
+    @ChildContent.Invoke(_value)
+}
+
+@code {
+
+    private IDisposable? _disposable;
+
+    private T? _value;
+
+    [Parameter]
+    public IObservable<T>? Value { get; set; }
+
+    [Parameter]
+    public RenderFragment<T?>? ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _disposable?.Dispose();
+
+        _disposable = Value?.Subscribe(x =>
+        {
+            _value = x;
+            StateHasChanged();
+        });
+    }
+
+}
