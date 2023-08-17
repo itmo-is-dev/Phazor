@@ -3,10 +3,8 @@
 
 <button onclick="@OnClick">Increment</button>
 
-<PhazorReactiveValue Value="_subject">
-    <Fragment Context="value">
-        Value = @value
-    </Fragment>
+<PhazorReactiveValue Value="_subject" Context="value">
+    Value = @value
 </PhazorReactiveValue>
 
 @code {

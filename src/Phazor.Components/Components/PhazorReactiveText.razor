@@ -2,26 +2,13 @@
 @using Phazor.Components.Extensions
 @namespace Phazor.Components
 
-@_value
+<PhazorReactiveValue Value="Value" Context="value">
+    @value
+</PhazorReactiveValue>
 
 @code {
 
-    private IDisposable? _disposable;
-
-    private string? _value;
-
     [Parameter]
     public IObservable<string>? Value { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        _disposable?.Dispose();
-
-        _disposable = Value?.Subscribe(x =>
-        {
-            _value = x;
-            StateHasChanged();
-        });
-    }
 
 }
