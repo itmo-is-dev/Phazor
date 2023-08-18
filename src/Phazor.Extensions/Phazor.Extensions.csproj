@@ -18,12 +18,16 @@
         <PatchVersion>0</PatchVersion>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added disposable extensions
+            Added subscribe extension
         </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Reactive" />
     </ItemGroup>
 
 </Project>
