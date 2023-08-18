@@ -7,6 +7,12 @@ public static class DisposableExtensions
         return new CombinedDisposable(disposable, other);
     }
 
+#pragma warning disable CA1045
+    public static void CombineTo(this IDisposable disposable, ref IDisposable other)
+    {
+        other = other.Combine(disposable);
+    }
+
     private class CombinedDisposable : IDisposable
     {
         private readonly IDisposable _first;
