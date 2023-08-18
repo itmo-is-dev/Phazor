@@ -1,7 +1,7 @@
 @namespace Phazor.Components
 @typeparam T
 
-@if (_value is not null && ChildContent is not null)
+@if (_value is not null && _hasValue && ChildContent is not null)
 {
     @ChildContent.Invoke(_value)
 }
@@ -10,6 +10,7 @@
 
     private IDisposable? _disposable;
 
+    private bool _hasValue;
     private T? _value;
 
     [Parameter]
@@ -24,7 +25,9 @@
 
         _disposable = Value?.Subscribe(x =>
         {
+            _hasValue = true;
             _value = x;
+
             StateHasChanged();
         });
     }
