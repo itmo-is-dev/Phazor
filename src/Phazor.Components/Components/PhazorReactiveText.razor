@@ -2,7 +2,7 @@
 @using Phazor.Components.Extensions
 @namespace Phazor.Components
 
-<PhazorReactiveValue Value="Value" Context="value">
+<PhazorReactiveValue Value="Value" Context="value" ValueChanged="ValueChanged">
     @value
 </PhazorReactiveValue>
 
@@ -10,5 +10,8 @@
 
     [Parameter]
     public IObservable<string>? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string>? ValueChanged { get; set; }
 
 }

@@ -18,6 +18,9 @@
     [Parameter]
     public RenderFragment<T?>? ChildContent { get; set; }
 
+    [Parameter]
+    public EventCallback<T>? ValueChanged { get; set; }
+
     protected override void OnParametersSet()
     {
         _disposable?.Dispose();
@@ -25,6 +28,9 @@
         _disposable = Value?.Subscribe(x =>
         {
             _value = x;
+
+            ValueChanged?.InvokeAsync(x);
+
             StateHasChanged();
         });
     }
