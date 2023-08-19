@@ -1,0 +1,23 @@
+@page "/Binding"
+
+<PhazorBinding T="bool" Context="subject">
+
+    <button onclick="@(() => subject.OnNext(true))">
+        Show
+    </button>
+
+    <PhazorReactiveValue Value="subject" Context="visible">
+
+        <div hidden="@(!visible)">
+
+            Content
+
+            <button onclick="@(() => subject.OnNext(false))">
+                Hide
+            </button>
+
+        </div>
+
+    </PhazorReactiveValue>
+
+</PhazorBinding>

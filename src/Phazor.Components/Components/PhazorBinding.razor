@@ -1,0 +1,23 @@
+@using System.Reactive.Subjects
+@namespace Phazor.Components
+@typeparam T
+@implements IDisposable
+
+@if (ChildContent is not null)
+{
+    @ChildContent.Invoke(_subject)
+}
+
+@code {
+
+    private readonly Subject<T> _subject = new Subject<T>();
+
+    [Parameter]
+    public RenderFragment<ISubject<T>>? ChildContent { get; set; }
+
+    public void Dispose()
+    {
+        _subject.Dispose();
+    }
+
+}
