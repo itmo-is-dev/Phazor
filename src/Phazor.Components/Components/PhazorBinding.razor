@@ -3,21 +3,36 @@
 @typeparam T
 @implements IDisposable
 
-@if (ChildContent is not null)
+@if (_subject is not null && ChildContent is not null)
 {
     @ChildContent.Invoke(_subject)
 }
 
 @code {
 
-    private readonly Subject<T> _subject = new Subject<T>();
+    private SubjectBase<T>? _subject;
+
+    [Parameter]
+    public int? ReplaySize { get; set; }
 
     [Parameter]
     public RenderFragment<ISubject<T>>? ChildContent { get; set; }
 
     public void Dispose()
     {
-        _subject.Dispose();
+        _subject?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ReplaySize is > 0)
+        {
+            _subject = new ReplaySubject<T>(ReplaySize.Value);
+        }
+        else
+        {
+            _subject = new Subject<T>();
+        }
     }
 
 }
