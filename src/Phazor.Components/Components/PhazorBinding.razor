@@ -1,7 +1,12 @@
 @using System.Reactive.Subjects
+@using Microsoft.Extensions.Logging
+@using Microsoft.Extensions.Options
+@using Phazor.Components.Tools
 @namespace Phazor.Components
 @typeparam T
 @implements IDisposable
+@inject IOptionsMonitor<PhazorComponentsOptions> Options
+@inject ILogger<PhazorBinding<T>> Logger
 
 @if (_subject is not null && ChildContent is not null)
 {
@@ -33,6 +38,9 @@
         {
             _subject = new Subject<T>();
         }
+
+        if (Options.CurrentValue.Trace)
+            _subject = new LoggingSubjectWrapper<T>(Logger, _subject);
     }
 
 }
