@@ -9,14 +9,14 @@
 @inject IOptionsMonitor<PhazorComponentsOptions> Options
 @inject ILogger<PhazorBinding<T>> Logger
 
-@if (_subject is not null && ChildContent is not null)
+@if (ChildContent is not null)
 {
     @ChildContent.Invoke(_subject)
 }
 
 @code {
 
-    private SubjectBase<T>? _subject;
+    private SubjectBase<T> _subject = new Subject<T>();
 
     [Parameter]
     public int? ReplaySize { get; set; }
@@ -48,7 +48,7 @@
                 _subject = new LoggingSubjectWrapper<T>(Logger, _subject);
             }
         }
-        
+
         return base.SetParametersAsync(parameters);
     }
 
