@@ -1,6 +1,7 @@
 @using System.Reactive.Subjects
 @using Microsoft.Extensions.Logging
 @using Microsoft.Extensions.Options
+@using Phazor.Components.Extensions
 @using Phazor.Components.Tools
 @namespace Phazor.Components
 @typeparam T
@@ -28,19 +29,27 @@
         _subject?.Dispose();
     }
 
-    protected override void OnParametersSet()
+    public override Task SetParametersAsync(ParameterView parameters)
     {
-        if (ReplaySize is > 0)
+        if (parameters.TryGetUpdatedValue(nameof(ReplaySize), ReplaySize, out var replaySize))
         {
-            _subject = new ReplaySubject<T>(ReplaySize.Value);
-        }
-        else
-        {
-            _subject = new Subject<T>();
-        }
+            if (replaySize is > 0)
+            {
+                _subject = new ReplaySubject<T>(replaySize.Value);
+            }
+            else
+            {
+                _subject = new Subject<T>();
+            }
 
-        if (Options.CurrentValue.Trace)
-            _subject = new LoggingSubjectWrapper<T>(Logger, _subject);
+            if (Options.CurrentValue.Trace)
+            {
+                Logger.LogInformation("Created subject = {Subject}", _subject.GetType());
+                _subject = new LoggingSubjectWrapper<T>(Logger, _subject);
+            }
+        }
+        
+        return base.SetParametersAsync(parameters);
     }
 
 }
