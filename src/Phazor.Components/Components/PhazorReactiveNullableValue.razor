@@ -1,5 +1,10 @@
 @namespace Phazor.Components
+@using Microsoft.Extensions.Options
+@using Phazor.Components.Tools
+@using Microsoft.Extensions.Logging
 @typeparam T
+@inject IOptionsMonitor<PhazorComponentsOptions> Options
+@inject ILogger<PhazorReactiveNullableValue<T>> Logger
 
 @if (ChildContent is not null)
 {
@@ -25,8 +30,18 @@
     {
         _disposable?.Dispose();
 
+        var options = Options.CurrentValue;
+
         _disposable = Value?.Subscribe(x =>
         {
+            if (options.Trace)
+            {
+                Logger.LogInformation(
+                    "PhazorReactiveNullableValue<{Type}> received value = {Value}",
+                    typeof(T).Name,
+                    x);
+            }
+            
             _value = x;
 
             ValueChanged?.InvokeAsync(x);
