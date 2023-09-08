@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Phazor.Components.Extensions;
 
-internal static class ParameterViewExtensions
+public static class ParameterViewExtensions
 {
     // Reference types
     public static bool TryGetUpdatedValue<T>(

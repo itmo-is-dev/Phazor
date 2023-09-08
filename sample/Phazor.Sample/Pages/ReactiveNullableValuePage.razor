@@ -1,0 +1,22 @@
+@page "/ReactiveNullableValue"
+@using System.Reactive.Subjects
+
+<button onclick="@OnClick">Toggle</button>
+
+<PhazorReactiveNullableValue Value="_subject" Context="value">
+    Value = @(value?.ToString() ?? "No value") 
+</PhazorReactiveNullableValue>
+
+@code {
+
+    private readonly Subject<int?> _subject = new Subject<int?>();
+
+    private bool _isNull;
+
+    private void OnClick()
+    {
+        _subject.OnNext(_isNull ? null : 1);
+        _isNull = !_isNull;
+    }
+
+}
