@@ -1,0 +1,19 @@
+@if (Condition is not null && ChildContent is not null)
+{
+    <PhazorReactiveValue Value="Condition">
+        @if (context)
+        {
+            @ChildContent
+        }
+    </PhazorReactiveValue>
+}
+
+@code {
+    
+    [Parameter]
+    public IObservable<bool>? Condition { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+}
