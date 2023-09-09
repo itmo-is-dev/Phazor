@@ -1,3 +1,5 @@
+@namespace Phazor.Components
+
 @if (Condition is not null)
 {
     <PhazorReactiveValue Value="Condition">
@@ -13,14 +15,14 @@
 }
 
 @code {
-    
+
     [Parameter]
     public IObservable<bool>? Condition { get; set; }
 
     [Parameter]
     public RenderFragment? True { get; set; }
-    
+
     [Parameter]
     public RenderFragment? False { get; set; }
-    
+
 }
