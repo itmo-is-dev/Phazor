@@ -1,0 +1,42 @@
+@page "/ForwardPaginator"
+@implements IForwardPaginatorController<int, int>
+
+<div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+    <div style="width: 50%; height: 80%">
+        <PhazorForwardPaginator Controller="@this">
+            <ChildContent Context="elements">
+                @foreach (var element in elements)
+                {
+                    <div>@element</div>
+                }
+            </ChildContent>
+            <Loader>
+                Loading...
+            </Loader>
+        </PhazorForwardPaginator>
+    </div>
+</div>
+
+@code {
+
+    public int CreateState()
+        => 0;
+
+    public async Task<ForwardPageLoadResult<int, int>> LoadPageAsync(int state, CancellationToken cancellationToken)
+    {
+        const int pageSize = 20;
+
+        await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+
+        IEnumerable<int> elements = Enumerable.Range(state, pageSize);
+        var result = new ForwardPageLoadResult<int, int>(elements, state + pageSize);
+
+        return result;
+    }
+
+    public bool ShouldLoadNextPage(int state)
+    {
+        return state < 200;
+    }
+
+}
