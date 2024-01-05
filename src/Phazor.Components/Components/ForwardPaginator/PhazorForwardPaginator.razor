@@ -79,7 +79,9 @@
             await Js.InvokeVoidAsync("subscribeOnScrollFinished", _contentId, _reference);
         }
 
-        if (_isLoading is false && await Js.InvokeAsync<bool>("isContentFillingParent", _contentId) is false)
+        if (_isLoading is false 
+            && (_state is null || Controller?.ShouldLoadNextPage(_state) is true)
+            && await Js.InvokeAsync<bool>("isContentFillingParent", _contentId) is false)
         {
             OnScrollFinished();
         }
