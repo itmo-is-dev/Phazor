@@ -18,7 +18,7 @@
         <PatchVersion>0</PatchVersion>
         <Version>1.1.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added reactive if{else}
+            Fixed forward paginator first load
         </PackageReleaseNotes>
     </PropertyGroup>
 

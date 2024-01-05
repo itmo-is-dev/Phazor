@@ -91,10 +91,14 @@
         if (Controller is null)
             return;
 
-        _state ??= Controller.CreateState();
-
-        if (Controller.ShouldLoadNextPage(_state) is false)
+        if (_state is null)
+        {
+            _state = Controller.CreateState();
+        }
+        else if (Controller.ShouldLoadNextPage(_state) is false)
+        {
             return;
+        }
 
         _isLoading = true;
         StateHasChanged();
