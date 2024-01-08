@@ -4,6 +4,8 @@
     <EnablePackageVersionOverride>false</EnablePackageVersionOverride>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="FluentScanning" Version="2.0.1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageVersion Include="System.Reactive" Version="6.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />

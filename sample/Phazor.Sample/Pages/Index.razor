@@ -1,10 +1,36 @@
 ﻿@page "/"
+@using Phazor.Sample.Models
+@using FluentScanning
+@using Phazor.Sample.Tools
+@using System.Reflection
 
 <div style="display: flex; flex-direction: column">
-    <a href="/ReactiveForEach">PhazorReactiveForEach</a>
-    <a href="/ReactiveText">PhazorReactiveText</a>
-    <a href="/ReactiveValue">PhazorReactiveValue</a>
-    <a href="/ReactiveNullableValue">PhazorReactiveNullableValue</a>
-    <a href="/Binding">PhazorBinding</a>
-    <a href="/ForwardPaginator">ForwardPaginator</a>
+    @foreach (var sample in _samples)
+    {
+        <a href="@sample.Path">@sample.Name</a>
+    }
 </div>
+
+@code{
+
+    private IEnumerable<PhazorSample> _samples = Enumerable.Empty<PhazorSample>();
+
+    protected override void OnInitialized()
+    {
+        _samples = new AssemblyScanner(typeof(Index))
+            .ScanForTypesThat()
+            .HaveAttribute<PhazorSampleAttribute>()
+            .HaveAttribute<RouteAttribute>()
+            .AreNotAbstractClasses()
+            .AreNotInterfaces()
+            .Select(type =>
+            {
+                var sample = type.GetCustomAttribute<PhazorSampleAttribute>()!;
+                var route = type.GetCustomAttribute<RouteAttribute>()!;
+
+                return new PhazorSample(route.Template, sample.Name);
+            })
+            .ToArray();
+    }
+
+}

@@ -1,0 +1,62 @@
+@namespace Phazor.Components
+@using Phazor.Components.Tools
+@using Phazor.Components.Models
+@inherits PhazorComponent
+
+<div style="@ComputedStyle" class="@ComputedClass">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Reversed { get; set; }
+
+    [Parameter]
+    public VerticalDistribution Vertical { get; set; } = VerticalDistribution.Center;
+
+    [Parameter]
+    public HorizontalAlignment Horizontal { get; set; } = HorizontalAlignment.Center;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void ConfigureStyle(CssStyleBuilder builder)
+    {
+        builder
+            .Add("display", "flex")
+            .AddWhen(Reversed, "flex-direction", "column-reversed", "column")
+            .Add("justify-content", ToCssString(Vertical))
+            .Add("align-items", ToCssString(Horizontal));
+    }
+
+    protected override void ConfigureClasses(CssClassBuilder builder)
+    {
+        builder.Add("phazor-vstack");
+    }
+
+    private static string ToCssString(VerticalDistribution distribution)
+    {
+        return distribution switch
+        {
+            VerticalDistribution.Top => "start",
+            VerticalDistribution.Center => "center",
+            VerticalDistribution.Bottom => "end",
+            VerticalDistribution.Around => "space-around",
+            VerticalDistribution.Between => "space-between",
+            _ => throw new ArgumentOutOfRangeException(nameof(distribution), distribution, null),
+        };
+    }
+
+    private static string ToCssString(HorizontalAlignment alignment)
+    {
+        return alignment switch
+        {
+            HorizontalAlignment.Left => "start",
+            HorizontalAlignment.Center => "center",
+            HorizontalAlignment.Right => "end",
+            _ => throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null),
+        };
+    }
+
+}

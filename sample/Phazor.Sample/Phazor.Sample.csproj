@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <ItemGroup>
+        <PackageReference Include="FluentScanning" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Phazor.Components\Phazor.Components.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\ColorComponent.razor" />
     </ItemGroup>
 
 </Project>
