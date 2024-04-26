@@ -90,7 +90,7 @@
     [JSInvokable]
     public async void OnScrollFinished()
     {
-        if (Controller is null)
+        if (Controller is null || _isLoading)
             return;
 
         if (_state is null)

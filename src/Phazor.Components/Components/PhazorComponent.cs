@@ -7,7 +7,7 @@ public abstract class PhazorComponent : ComponentBase, ICssClassDirector, ICssSt
 {
     protected string ComputedStyle => new CssStyleBuilder().Use(this).Build();
     protected string ComputedClass => new CssClassBuilder().Use(this).Build();
-    
+
     [Parameter]
     public string? Style { get; set; }
 
