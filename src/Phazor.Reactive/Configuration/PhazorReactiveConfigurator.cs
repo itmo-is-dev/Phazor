@@ -14,11 +14,17 @@ internal sealed class PhazorReactiveConfigurator : IPhazorReactiveConfigurator
         _collection = collection;
     }
 
-    public IPhazorReactiveConfigurator AddEntityFactory<TEntity, TIdentifier, TFactory>()
+    public IPhazorReactiveConfigurator AddEntityFactory<TEntity, TIdentifier, TAlias, TFactory>()
         where TEntity : IReactiveEntity<TIdentifier>
-        where TFactory : class, IReactiveEntityFactory<TEntity, TIdentifier>
+        where TAlias : class, IReactiveEntityFactory<TEntity, TIdentifier>
+        where TFactory : class, TAlias
     {
-        _collection.AddSingleton<IReactiveEntityFactory<TEntity, TIdentifier>, TFactory>();
+        _collection.AddSingleton<TFactory>();
+        _collection.AddSingleton<TAlias>(provider => provider.GetRequiredService<TFactory>());
+
+        _collection.AddSingleton<IReactiveEntityFactory<TEntity, TIdentifier>>(
+            provider => provider.GetRequiredService<TFactory>());
+
         return this;
     }
 

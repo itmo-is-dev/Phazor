@@ -25,8 +25,11 @@ public class ReactiveEntityGenerator : ISourceGenerator
             if (context.CancellationToken.IsCancellationRequested)
                 return;
 
+            var factory = new EntityFactory(entity);
+
             GenerateEntity(entity, context);
-            GenerateEntityFactory(entity, context);
+            GenerateEntityFactory(factory, context);
+            GenerateEntityFactoryAlias(factory, context);
         }
 
         foreach (ReactiveEvent evt in receiver.Events)
@@ -48,7 +51,8 @@ public class ReactiveEntityGenerator : ISourceGenerator
     private static void GenerateEntity(ReactiveEntity entity, GeneratorExecutionContext context)
     {
         TypeDeclarationSyntax typeSyntax = entity.ToSyntax();
-        IdentifierNameSyntax namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
+        IdentifierNameSyntax namespaceIdentifier =
+            IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
         NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
         CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
@@ -58,17 +62,34 @@ public class ReactiveEntityGenerator : ISourceGenerator
         context.AddSource(fileName, text);
     }
 
-    private static void GenerateEntityFactory(ReactiveEntity entity, GeneratorExecutionContext context)
+    private static void GenerateEntityFactory(EntityFactory factory, GeneratorExecutionContext context)
     {
-        var factory = new EntityFactory(entity);
+        ClassDeclarationSyntax typeSyntax = factory.ToFactorySyntax();
 
-        ClassDeclarationSyntax typeSyntax = factory.ToSyntax();
-        IdentifierNameSyntax namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(
+            factory.Entity.InterfaceType.ContainingNamespace.ToDisplayString());
+
         NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
         CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
         string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
         string fileName = $"{factory.FullyQualifiedName}.cs";
+
+        context.AddSource(fileName, text);
+    }
+
+    private static void GenerateEntityFactoryAlias(EntityFactory factory, GeneratorExecutionContext context)
+    {
+        InterfaceDeclarationSyntax typeSyntax = factory.ToFactoryAliasSyntax();
+
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(
+            factory.Entity.InterfaceType.ContainingNamespace.ToDisplayString());
+
+        NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
+
+        CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
+        string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
+        string fileName = $"{factory.AliasFullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
     }
@@ -93,7 +114,9 @@ public class ReactiveEntityGenerator : ISourceGenerator
 
     private static void GenerateRegistration(RegistrationExtension registration, GeneratorExecutionContext context)
     {
-        ClassDeclarationSyntax typeSyntax = registration.ToSyntax();
+        if (registration.TryGetSyntax(out ClassDeclarationSyntax? typeSyntax) is false)
+            return;
+
         IdentifierNameSyntax namespaceIdentifier = IdentifierName(context.Compilation.Assembly.Name);
         NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 

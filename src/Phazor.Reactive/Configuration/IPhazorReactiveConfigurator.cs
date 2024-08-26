@@ -4,9 +4,10 @@ namespace Phazor.Reactive;
 
 public interface IPhazorReactiveConfigurator
 {
-    IPhazorReactiveConfigurator AddEntityFactory<TEntity, TIdentifier, TFactory>()
+    IPhazorReactiveConfigurator AddEntityFactory<TEntity, TIdentifier, TAlias, TFactory>()
         where TEntity : IReactiveEntity<TIdentifier>
-        where TFactory : class, IReactiveEntityFactory<TEntity, TIdentifier>;
+        where TAlias : class, IReactiveEntityFactory<TEntity, TIdentifier>
+        where TFactory : class, TAlias;
 
     IPhazorReactiveConfigurator AddEventHandler<TEvent, THandler>()
         where TEvent : IReactiveEvent<TEvent>

@@ -3,15 +3,17 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Phazor.Reactive.Generators.Extensions;
 using Phazor.Reactive.Generators.Models.Effects;
+using Phazor.Reactive.Generators.Models.Entities;
 using Phazor.Reactive.Generators.Models.Events;
+using System.Diagnostics.CodeAnalysis;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Phazor.Reactive.Generators.Models;
 
 public record RegistrationExtension(
     IAssemblySymbol Assembly,
-    IReadOnlyCollection<EntityFactory> Factories,
-    IReadOnlyCollection<ReactiveEventHandler> EventHandlers)
+    IReadOnlyList<EntityFactory> Factories,
+    IReadOnlyList<ReactiveEventHandler> EventHandlers)
 {
     private const string ClassName = "PhazorReactiveConfiguratorExtensions";
 
@@ -19,8 +21,14 @@ public record RegistrationExtension(
 
     public string FullyQualifiedName { get; } = $"{Assembly.Name}.{ClassName}";
 
-    public ClassDeclarationSyntax ToSyntax()
+    public bool TryGetSyntax([NotNullWhen(true)] out ClassDeclarationSyntax? syntax)
     {
+        if (Factories is [] && EventHandlers is [])
+        {
+            syntax = null;
+            return false;
+        }
+
         IdentifierNameSyntax configuratorType = IdentifierName(Constants.ConfiguratorIdentifier);
 
         ParameterSyntax parameter = Parameter(Identifier("configurator"))
@@ -36,19 +44,22 @@ public record RegistrationExtension(
             .AddBodyStatements(EventHandlers.Select(x => ToRegistrationSyntax(x, parameter.Identifier)).ToArray())
             .AddBodyStatements(ReturnStatement(IdentifierName(parameter.Identifier)));
 
-        return ClassDeclaration(Name)
+        syntax = ClassDeclaration(Name)
             .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword))
             .AddMembers(method);
+
+        return true;
     }
 
     private static StatementSyntax ToRegistrationSyntax(EntityFactory factory, SyntaxToken parameterIdentifier)
     {
         IdentifierNameSyntax entityType = IdentifierName(factory.Entity.InterfaceType.GetFullyQualifiedName());
         IdentifierNameSyntax identifierType = IdentifierName(factory.Entity.IdentifierType.GetFullyQualifiedName());
+        IdentifierNameSyntax aliasType = IdentifierName(factory.AliasFullyQualifiedName);
         IdentifierNameSyntax factoryType = IdentifierName(factory.FullyQualifiedName);
 
         GenericNameSyntax methodName = GenericName("AddEntityFactory")
-            .AddTypeArgumentListArguments(entityType, identifierType, factoryType);
+            .AddTypeArgumentListArguments(entityType, identifierType, aliasType, factoryType);
 
         MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,

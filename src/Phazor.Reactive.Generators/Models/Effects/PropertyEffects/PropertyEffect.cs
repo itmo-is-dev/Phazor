@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Phazor.Reactive.Generators.Models.Entities;
 using Phazor.Reactive.Generators.Models.Entities.Properties;
 using Phazor.Reactive.Generators.Tools;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;

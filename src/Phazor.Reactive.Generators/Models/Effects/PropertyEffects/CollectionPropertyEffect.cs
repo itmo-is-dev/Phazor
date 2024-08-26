@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Phazor.Reactive.Generators.Models.Effects.CollectionEffectActions;
+using Phazor.Reactive.Generators.Models.Entities;
 using Phazor.Reactive.Generators.Models.Entities.Properties;
 using Phazor.Reactive.Generators.Tools;
 using System.Diagnostics.CodeAnalysis;
