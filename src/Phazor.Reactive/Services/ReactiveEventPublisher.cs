@@ -20,4 +20,13 @@ internal class ReactiveEventPublisher : IReactiveEventPublisher
             await handler.TryHandleAsync(evt, cancellationToken);
         }
     }
+
+    public async ValueTask PublishAsync<TEvent>(IEnumerable<TEvent> events, CancellationToken cancellationToken)
+        where TEvent : IReactiveEvent<TEvent>
+    {
+        foreach (TEvent evt in events)
+        {
+            await PublishAsync(evt, cancellationToken);
+        }
+    }
 }
