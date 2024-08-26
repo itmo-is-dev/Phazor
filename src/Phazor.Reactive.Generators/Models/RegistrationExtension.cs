@@ -21,13 +21,13 @@ public record RegistrationExtension(
 
     public ClassDeclarationSyntax ToSyntax()
     {
-        var configuratorType = IdentifierName(Constants.ConfiguratorIdentifier);
+        IdentifierNameSyntax configuratorType = IdentifierName(Constants.ConfiguratorIdentifier);
 
-        var parameter = Parameter(Identifier("configurator"))
+        ParameterSyntax parameter = Parameter(Identifier("configurator"))
             .WithType(configuratorType)
             .AddModifiers(Token(SyntaxKind.ThisKeyword));
 
-        var method = MethodDeclaration(configuratorType, $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", "")}")
+        MethodDeclarationSyntax method = MethodDeclaration(configuratorType, $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", "")}")
             .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword))
             .AddParameterListParameters(parameter)
             .AddBodyStatements(Factories.Select(x => ToRegistrationSyntax(x, parameter.Identifier)).ToArray())
@@ -41,14 +41,14 @@ public record RegistrationExtension(
 
     private static StatementSyntax ToRegistrationSyntax(EntityFactory factory, SyntaxToken parameterIdentifier)
     {
-        var entityType = IdentifierName(factory.Entity.InterfaceType.GetFullyQualifiedName());
-        var identifierType = IdentifierName(factory.Entity.IdentifierType.GetFullyQualifiedName());
-        var factoryType = IdentifierName(factory.FullyQualifiedName);
+        IdentifierNameSyntax entityType = IdentifierName(factory.Entity.InterfaceType.GetFullyQualifiedName());
+        IdentifierNameSyntax identifierType = IdentifierName(factory.Entity.IdentifierType.GetFullyQualifiedName());
+        IdentifierNameSyntax factoryType = IdentifierName(factory.FullyQualifiedName);
 
-        var methodName = GenericName("AddEntityFactory")
+        GenericNameSyntax methodName = GenericName("AddEntityFactory")
             .AddTypeArgumentListArguments(entityType, identifierType, factoryType);
 
-        var memberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             IdentifierName(parameterIdentifier),
             methodName);
@@ -58,12 +58,12 @@ public record RegistrationExtension(
 
     private static StatementSyntax ToRegistrationSyntax(ReactiveEventHandler handler, SyntaxToken parameterIdentifier)
     {
-        var eventType = IdentifierName(handler.Event.FullyQualifiedName);
-        var handlerType = IdentifierName(handler.FullyQualifiedName);
+        IdentifierNameSyntax eventType = IdentifierName(handler.Event.FullyQualifiedName);
+        IdentifierNameSyntax handlerType = IdentifierName(handler.FullyQualifiedName);
 
-        var methodName = GenericName("AddEventHandler").AddTypeArgumentListArguments(eventType, handlerType);
+        GenericNameSyntax methodName = GenericName("AddEventHandler").AddTypeArgumentListArguments(eventType, handlerType);
 
-        var memberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             IdentifierName(parameterIdentifier),
             methodName);

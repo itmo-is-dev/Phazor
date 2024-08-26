@@ -10,17 +10,17 @@ var collection = new ServiceCollection();
 collection.AddPhazorReactive(reactive => reactive
     .AddPhazorReactiveFromPhazorReactiveSample());
 
-var provider = collection.BuildServiceProvider();
+ServiceProvider provider = collection.BuildServiceProvider();
 
-var factory = provider.GetRequiredService<IReactiveEntityFactory<IMyEntity, long>>();
-var publisher = provider.GetRequiredService<IReactiveEventPublisher>();
-var eventProvider = provider.GetRequiredService<IReactiveEventProvider>();
+IReactiveEntityFactory<IMyEntity, long> factory = provider.GetRequiredService<IReactiveEntityFactory<IMyEntity, long>>();
+IReactiveEventPublisher publisher = provider.GetRequiredService<IReactiveEventPublisher>();
+IReactiveEventProvider eventProvider = provider.GetRequiredService<IReactiveEventProvider>();
 
 const long id = 1;
 
-var entity = factory.Create(id);
-using var _ = entity.Collection.Subscribe(x => Console.WriteLine(string.Join(", ", x)));
-using var _1 = eventProvider.Observe<MyEvent>().Subscribe(Console.WriteLine);
+IMyEntity entity = factory.Create(id);
+using IDisposable _ = entity.Collection.Subscribe(x => Console.WriteLine(string.Join(", ", x)));
+using IDisposable _1 = eventProvider.Observe<MyEvent>().Subscribe(Console.WriteLine);
 
 var evt = new MyEvent(id, 1);
 await publisher.PublishAsync(evt, default);

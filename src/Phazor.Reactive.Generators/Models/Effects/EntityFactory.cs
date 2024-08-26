@@ -15,17 +15,17 @@ public record EntityFactory(ReactiveEntity Entity)
 
     public ClassDeclarationSyntax ToSyntax()
     {
-        var entityInterfaceType = IdentifierName(Entity.InterfaceType.GetFullyQualifiedName());
-        var identifierType = IdentifierName(Entity.IdentifierType.GetFullyQualifiedName());
+        IdentifierNameSyntax entityInterfaceType = IdentifierName(Entity.InterfaceType.GetFullyQualifiedName());
+        IdentifierNameSyntax identifierType = IdentifierName(Entity.IdentifierType.GetFullyQualifiedName());
 
-        var baseType = GenericName(Constants.ReactiveFactoryBaseIdentifier)
+        GenericNameSyntax baseType = GenericName(Constants.ReactiveFactoryBaseIdentifier)
             .AddTypeArgumentListArguments(entityInterfaceType)
             .AddTypeArgumentListArguments(identifierType);
 
-        var objectCreation = ObjectCreationExpression(IdentifierName(Entity.Name))
+        ObjectCreationExpressionSyntax objectCreation = ObjectCreationExpression(IdentifierName(Entity.Name))
             .AddArgumentListArguments(Argument(IdentifierName("id")));
 
-        var createMethod = MethodDeclaration(entityInterfaceType, "CreateInternal")
+        MethodDeclarationSyntax createMethod = MethodDeclaration(entityInterfaceType, "CreateInternal")
             .AddModifiers(Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.OverrideKeyword))
             .AddParameterListParameters(Parameter(Identifier("id")).WithType(identifierType))
             .AddBodyStatements(ReturnStatement(objectCreation));

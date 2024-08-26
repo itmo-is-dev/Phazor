@@ -33,7 +33,7 @@ public class ReactiveCollectionProperty<T> : IObservable<IEnumerable<T>>, IDispo
 
     public void Remove(IEnumerable<T> values)
     {
-        foreach (var value in values)
+        foreach (T? value in values)
             _values.Remove(value);
 
         _subject.OnNext(_values);

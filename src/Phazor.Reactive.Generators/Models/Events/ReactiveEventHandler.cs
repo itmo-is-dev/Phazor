@@ -1,7 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Phazor.Reactive.Generators.Extensions;
 using Phazor.Reactive.Generators.Models.Effects;
 using Phazor.Reactive.Generators.Models.Entities;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -16,12 +15,12 @@ public record ReactiveEventHandler(ReactiveEvent Event)
 
     public ClassDeclarationSyntax ToSyntax(IEnumerable<ReactiveEntity> entities)
     {
-        var baseType = GenericName(Constants.EventHandlerIdentifier)
+        GenericNameSyntax baseType = GenericName(Constants.EventHandlerIdentifier)
             .AddTypeArgumentListArguments(IdentifierName(Event.FullyQualifiedName));
 
         var context = new EffectGenerationContext(entities);
 
-        var method = GenerateHandleMethod(context);
+        MemberDeclarationSyntax method = GenerateHandleMethod(context);
 
         return ClassDeclaration(Name)
             .AddModifiers(Token(SyntaxKind.InternalKeyword))
@@ -32,12 +31,12 @@ public record ReactiveEventHandler(ReactiveEvent Event)
 
     private MemberDeclarationSyntax GenerateHandleMethod(EffectGenerationContext context)
     {
-        var eventParameter = Parameter(Identifier("evt")).WithType(IdentifierName(Event.FullyQualifiedName));
+        ParameterSyntax eventParameter = Parameter(Identifier("evt")).WithType(IdentifierName(Event.FullyQualifiedName));
 
-        var cancellationTokenParameter = Parameter(Identifier("cancellationToken"))
+        ParameterSyntax cancellationTokenParameter = Parameter(Identifier("cancellationToken"))
             .WithType(IdentifierName(Constants.CancellationTokenParameter));
 
-        var completedTask = MemberAccessExpression(
+        MemberAccessExpressionSyntax completedTask = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             IdentifierName(Constants.ValueTaskIdentifier),
             IdentifierName("CompletedTask"));

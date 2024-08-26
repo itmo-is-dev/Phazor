@@ -21,7 +21,7 @@ public record EntityEffect(
         IEnumerable<IOperation> operations,
         Compilation compilation)
     {
-        var handlerBuilderSymbol = compilation
+        INamedTypeSymbol? handlerBuilderSymbol = compilation
             .GetTypeByMetadataName(Constants.HandlerBuilderMetadataName);
 
         if (handlerBuilderSymbol is null)

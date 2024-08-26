@@ -10,7 +10,7 @@ public abstract class ReactiveEntityFactory<TEntity, TIdentifier> : IReactiveEnt
 
     public TEntity Create(TIdentifier id)
     {
-        if (_entities.TryGetValue(id, out var reference) && reference.TryGetTarget(out var entity))
+        if (_entities.TryGetValue(id, out WeakReference<TEntity>? reference) && reference.TryGetTarget(out TEntity? entity))
             return entity;
 
         entity = CreateInternal(id);

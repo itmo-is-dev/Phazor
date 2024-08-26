@@ -22,7 +22,7 @@ public record ReactiveEntity(
 
     public TypeDeclarationSyntax ToSyntax()
     {
-        var members = Properties.SelectMany(x => x.ToMemberSyntax())
+        MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax())
             .Prepend(GenerateIdentifierProperty())
             .Append(GenerateIdentifierConstructor())
             .Append(GenerateDisposeMethod())
@@ -52,9 +52,9 @@ public record ReactiveEntity(
 
     private ConstructorDeclarationSyntax GenerateIdentifierConstructor()
     {
-        var parameter = Parameter(Identifier("id")).WithType(IdentifierName(IdentifierType.GetFullyQualifiedName()));
+        ParameterSyntax parameter = Parameter(Identifier("id")).WithType(IdentifierName(IdentifierType.GetFullyQualifiedName()));
 
-        var assignment = AssignmentExpression(
+        AssignmentExpressionSyntax assignment = AssignmentExpression(
             SyntaxKind.SimpleAssignmentExpression,
             IdentifierName("Id"),
             IdentifierName("id"));
@@ -67,7 +67,7 @@ public record ReactiveEntity(
 
     private PropertyDeclarationSyntax GenerateIdentifierProperty()
     {
-        var accessor = AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+        AccessorDeclarationSyntax accessor = AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
 
         return PropertyDeclaration(IdentifierName(IdentifierType.GetFullyQualifiedName()), "Id")
@@ -84,10 +84,10 @@ public record ReactiveEntity(
 
     private StatementSyntax GenerateDisposeInvocation(IReactiveProperty property)
     {
-        var fieldIdentifier = IdentifierName(property.BackingField.Name);
-        var methodIdentifier = IdentifierName("Dispose");
+        IdentifierNameSyntax fieldIdentifier = IdentifierName(property.BackingField.Name);
+        IdentifierNameSyntax methodIdentifier = IdentifierName("Dispose");
 
-        var memberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             fieldIdentifier,
             methodIdentifier);

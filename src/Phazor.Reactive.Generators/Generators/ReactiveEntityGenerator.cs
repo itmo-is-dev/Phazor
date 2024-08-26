@@ -1,10 +1,10 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Phazor.Reactive.Generators.Models;
 using Phazor.Reactive.Generators.Models.Effects;
 using Phazor.Reactive.Generators.Models.Entities;
 using Phazor.Reactive.Generators.Models.Events;
 using Phazor.Reactive.Generators.Receivers;
-using Phazor.Reactive.Generators.Tools;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Phazor.Reactive.Generators.Generators;
@@ -29,7 +29,7 @@ public class ReactiveEntityGenerator : ISourceGenerator
             GenerateEntityFactory(entity, context);
         }
 
-        foreach (var evt in receiver.Events)
+        foreach (ReactiveEvent evt in receiver.Events)
         {
             if (context.CancellationToken.IsCancellationRequested)
                 return;
@@ -47,13 +47,13 @@ public class ReactiveEntityGenerator : ISourceGenerator
 
     private static void GenerateEntity(ReactiveEntity entity, GeneratorExecutionContext context)
     {
-        var typeSyntax = entity.ToSyntax();
-        var namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
-        var namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
+        TypeDeclarationSyntax typeSyntax = entity.ToSyntax();
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
+        NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
-        var syntax = CompilationUnit().AddMembers(namespaceSyntax);
-        var text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
-        var fileName = $"{entity.FullyQualifiedName}.cs";
+        CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
+        string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
+        string fileName = $"{entity.FullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
     }
@@ -62,13 +62,13 @@ public class ReactiveEntityGenerator : ISourceGenerator
     {
         var factory = new EntityFactory(entity);
 
-        var typeSyntax = factory.ToSyntax();
-        var namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
-        var namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
+        ClassDeclarationSyntax typeSyntax = factory.ToSyntax();
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
+        NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
-        var syntax = CompilationUnit().AddMembers(namespaceSyntax);
-        var text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
-        var fileName = $"{factory.FullyQualifiedName}.cs";
+        CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
+        string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
+        string fileName = $"{factory.FullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
     }
@@ -80,26 +80,26 @@ public class ReactiveEntityGenerator : ISourceGenerator
     {
         var handler = new ReactiveEventHandler(evt);
 
-        var typeSyntax = handler.ToSyntax(entities);
-        var namespaceIdentifier = IdentifierName(evt.EventType.ContainingNamespace.ToDisplayString());
-        var namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
+        ClassDeclarationSyntax typeSyntax = handler.ToSyntax(entities);
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(evt.EventType.ContainingNamespace.ToDisplayString());
+        NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
-        var syntax = CompilationUnit().AddMembers(namespaceSyntax);
-        var text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
-        var fileName = $"{handler.FullyQualifiedName}.cs";
+        CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
+        string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
+        string fileName = $"{handler.FullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
     }
 
     private static void GenerateRegistration(RegistrationExtension registration, GeneratorExecutionContext context)
     {
-        var typeSyntax = registration.ToSyntax();
-        var namespaceIdentifier = IdentifierName(context.Compilation.Assembly.Name);
-        var namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
+        ClassDeclarationSyntax typeSyntax = registration.ToSyntax();
+        IdentifierNameSyntax namespaceIdentifier = IdentifierName(context.Compilation.Assembly.Name);
+        NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
 
-        var syntax = CompilationUnit().AddMembers(namespaceSyntax);
-        var text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
-        var fileName = $"{registration.FullyQualifiedName}.cs";
+        CompilationUnitSyntax syntax = CompilationUnit().AddMembers(namespaceSyntax);
+        string text = syntax.NormalizeWhitespace(eol: "\n").ToFullString();
+        string fileName = $"{registration.FullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
     }

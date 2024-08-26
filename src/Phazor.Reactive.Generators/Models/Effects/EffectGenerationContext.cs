@@ -19,7 +19,7 @@ public class EffectGenerationContext(IEnumerable<ReactiveEntity> entities)
 
     public EntityFactory GetFactory(INamedTypeSymbol symbol)
     {
-        if (_factories.TryGetValue(symbol, out var factory))
+        if (_factories.TryGetValue(symbol, out EntityFactory? factory))
             return factory;
 
         factory = new EntityFactory(GetEntity(symbol));
@@ -34,18 +34,18 @@ public class EffectGenerationContext(IEnumerable<ReactiveEntity> entities)
     {
         foreach (EntityFactory factory in _factories.Values)
         {
-            var fieldDeclarator = VariableDeclarator(factory.Field.Name);
-            var fieldDeclaration = VariableDeclaration(GetFactoryType(factory)).AddVariables(fieldDeclarator);
+            VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(factory.Field.Name);
+            VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(GetFactoryType(factory)).AddVariables(fieldDeclarator);
 
             yield return FieldDeclaration(fieldDeclaration)
                 .AddModifiers(Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.ReadOnlyKeyword));
         }
 
-        var parameters = _factories.Values
+        ParameterSyntax[] parameters = _factories.Values
             .Select(x => Parameter(Identifier(x.Field.Name)).WithType(GetFactoryType(x)))
             .ToArray();
 
-        var assignments = _factories.Values
+        StatementSyntax[] assignments = _factories.Values
             .Select(StatementSyntax (factory) => ExpressionStatement(AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
                 MemberAccessExpression(
@@ -63,7 +63,7 @@ public class EffectGenerationContext(IEnumerable<ReactiveEntity> entities)
 
     private GenericNameSyntax GetFactoryType(EntityFactory factory)
     {
-        var identifierType = GetEntity(factory.Entity.InterfaceType).IdentifierType.GetFullyQualifiedName();
+        string identifierType = GetEntity(factory.Entity.InterfaceType).IdentifierType.GetFullyQualifiedName();
 
         return GenericName(Constants.EntityFactoryIdentifier)
             .AddTypeArgumentListArguments(IdentifierName(factory.Entity.InterfaceType.GetFullyQualifiedName()))

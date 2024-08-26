@@ -28,7 +28,7 @@ internal class ReactiveEventProvider : IReactiveEventProvider, IDisposable
     private IProviderSubject GetOrCreateSubject<T>()
         where T : IReactiveEvent<T>
     {
-        if (_subjects.TryGetValue(typeof(T), out var subject))
+        if (_subjects.TryGetValue(typeof(T), out IProviderSubject? subject))
             return subject;
 
         subject = _subjects[typeof(T)] = new ProviderSubject<T>();

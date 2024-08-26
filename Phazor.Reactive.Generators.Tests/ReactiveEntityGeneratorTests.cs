@@ -54,7 +54,7 @@ public class ReactiveEntityGeneratorTests : GeneratorTestBase<ReactiveEntityGene
                  IObservable<IEnumerable<int>> Collection { get; }
              }
              """);
-        
+
         var source = new SourceFile(
             Name: "MyEvent.cs",
             Content: """

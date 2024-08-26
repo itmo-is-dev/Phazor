@@ -10,7 +10,7 @@ public record ClearAction : ICollectionEffectAction
 {
     public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax field, IdentifierNameSyntax eventIdentifier)
     {
-        var addMemberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax addMemberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             field,
             IdentifierName("Clear"));

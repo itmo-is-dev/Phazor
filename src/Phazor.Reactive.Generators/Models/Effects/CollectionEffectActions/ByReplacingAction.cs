@@ -11,10 +11,10 @@ public record ByReplacingAction(SimpleLambdaExpressionSyntax GetValueExpression)
 {
     public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax field, IdentifierNameSyntax eventIdentifier)
     {
-        var valueExpression = LambdaParameterReferenceSyntaxRewriter
+        ExpressionSyntax valueExpression = LambdaParameterReferenceSyntaxRewriter
             .RewriteToInocationResult(GetValueExpression, eventIdentifier);
 
-        var addMemberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax addMemberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             field,
             IdentifierName("ReplaceBy"));

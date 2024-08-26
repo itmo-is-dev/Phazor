@@ -291,7 +291,7 @@ dotnet_diagnostic.ide0090.severity = warning
 csharp_style_implicit_object_creation_when_type_is_apparent = false:warning
 
 # IDE0100
-dotnet_diagnostic.ide0100.severity = warning
+dotnet_diagnostic.ide0100.severity = none
 
 # IDE0110
 dotnet_diagnostic.ide0110.severity = warning
@@ -517,7 +517,6 @@ dotnet_naming_style.prefix_type_parameters_with_t_style.required_prefix = T
 dotnet_naming_style.disallowed_style.capitalization = pascal_case
 dotnet_naming_style.disallowed_style.required_prefix = ____RULE_VIOLATION____
 dotnet_naming_style.disallowed_style.required_suffix = ____RULE_VIOLATION____
-# internal_error_style - This style should never occur... if it does, it indicates a bug in file or in the parser using the file
 dotnet_naming_style.internal_error_style.capitalization = pascal_case
 dotnet_naming_style.internal_error_style.required_prefix = ____INTERNAL_ERROR____
 dotnet_naming_style.internal_error_style.required_suffix = ____INTERNAL_ERROR____

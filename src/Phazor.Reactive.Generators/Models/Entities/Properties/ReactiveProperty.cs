@@ -16,19 +16,19 @@ public record ReactiveProperty(IPropertySymbol Property, INamedTypeSymbol Type) 
 
     public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax()
     {
-        var valueType = IdentifierName(Type.GetFullyQualifiedName());
+        IdentifierNameSyntax valueType = IdentifierName(Type.GetFullyQualifiedName());
 
-        var fieldInitializer = EqualsValueClause(ImplicitObjectCreationExpression());
-        var fieldDeclarator = VariableDeclarator(BackingField.Name).WithInitializer(fieldInitializer);
-        var fieldType = FieldTypeName.AddTypeArgumentListArguments(valueType);
-        var fieldDeclaration = VariableDeclaration(fieldType).AddVariables(fieldDeclarator);
+        EqualsValueClauseSyntax fieldInitializer = EqualsValueClause(ImplicitObjectCreationExpression());
+        VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name).WithInitializer(fieldInitializer);
+        GenericNameSyntax fieldType = FieldTypeName.AddTypeArgumentListArguments(valueType);
+        VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(fieldType).AddVariables(fieldDeclarator);
 
         yield return FieldDeclaration(fieldDeclaration)
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.ReadOnlyKeyword));
 
-        var propertyBody = ArrowExpressionClause(IdentifierName(BackingField.Name));
-        var propertyType = ObservableTypeName.AddTypeArgumentListArguments(valueType);
-        var propertyName = Identifier(Property.Name);
+        ArrowExpressionClauseSyntax propertyBody = ArrowExpressionClause(IdentifierName(BackingField.Name));
+        GenericNameSyntax propertyType = ObservableTypeName.AddTypeArgumentListArguments(valueType);
+        SyntaxToken propertyName = Identifier(Property.Name);
 
         yield return PropertyDeclaration(propertyType, propertyName)
             .AddModifiers(Token(SyntaxKind.PublicKeyword))

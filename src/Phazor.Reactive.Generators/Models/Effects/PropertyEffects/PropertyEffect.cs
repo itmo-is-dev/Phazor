@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Phazor.Reactive.Generators.Models.Entities.Properties;
 using Phazor.Reactive.Generators.Tools;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -11,42 +12,42 @@ public record PropertyEffect(IPropertySymbol Property, SimpleLambdaExpressionSyn
 {
     public IEnumerable<StatementSyntax> ToStatementSyntax(EffectGenerationContext context, EntityEffect entityEffect)
     {
-        var eventIdentifier = IdentifierName("evt");
+        IdentifierNameSyntax eventIdentifier = IdentifierName("evt");
 
-        var factory = context.GetFactory(entityEffect.EntityType);
-        var entity = context.GetEntity(entityEffect.EntityType);
-        var property = entity.GetProperty(Property);
+        EntityFactory factory = context.GetFactory(entityEffect.EntityType);
+        Entities.ReactiveEntity entity = context.GetEntity(entityEffect.EntityType);
+        IReactiveProperty property = entity.GetProperty(Property);
 
-        var entityFullIdentifier = IdentifierName(entity.FullyQualifiedName);
-        var fieldIdentifier = IdentifierName(property.BackingField.Name);
+        IdentifierNameSyntax entityFullIdentifier = IdentifierName(entity.FullyQualifiedName);
+        IdentifierNameSyntax fieldIdentifier = IdentifierName(property.BackingField.Name);
 
-        var identifierExpression = LambdaParameterReferenceSyntaxRewriter
+        ExpressionSyntax identifierExpression = LambdaParameterReferenceSyntaxRewriter
             .RewriteToInocationResult(entityEffect.GetIdFromEventExpression, eventIdentifier);
 
-        var factoryMemberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax factoryMemberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             IdentifierName(factory.Field.Name),
             IdentifierName("Create"));
 
-        var getEntityInvocation = InvocationExpression(factoryMemberAccess)
+        InvocationExpressionSyntax getEntityInvocation = InvocationExpression(factoryMemberAccess)
             .AddArgumentListArguments(Argument(identifierExpression));
 
-        var concreteEntity = CastExpression(entityFullIdentifier, getEntityInvocation);
+        CastExpressionSyntax concreteEntity = CastExpression(entityFullIdentifier, getEntityInvocation);
 
-        var filedMemberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax filedMemberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             ParenthesizedExpression(concreteEntity),
             fieldIdentifier);
 
-        var valueExpression = LambdaParameterReferenceSyntaxRewriter
+        ExpressionSyntax valueExpression = LambdaParameterReferenceSyntaxRewriter
             .RewriteToInocationResult(GetValueExpression, eventIdentifier);
 
-        var changeToMemberAccess = MemberAccessExpression(
+        MemberAccessExpressionSyntax changeToMemberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
             filedMemberAccess,
             IdentifierName("ChangeTo"));
 
-        var changeToInvocation = InvocationExpression(changeToMemberAccess)
+        InvocationExpressionSyntax changeToInvocation = InvocationExpression(changeToMemberAccess)
             .AddArgumentListArguments(Argument(valueExpression));
 
         yield return ExpressionStatement(changeToInvocation).WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
