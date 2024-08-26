@@ -27,7 +27,7 @@ public record RegistrationExtension(
             .WithType(configuratorType)
             .AddModifiers(Token(SyntaxKind.ThisKeyword));
 
-        var methodIdentifier = $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", string.Empty)}";
+        string methodIdentifier = $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", string.Empty)}";
 
         MethodDeclarationSyntax method = MethodDeclaration(configuratorType, methodIdentifier)
             .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword))
