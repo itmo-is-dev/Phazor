@@ -27,7 +27,9 @@ public record RegistrationExtension(
             .WithType(configuratorType)
             .AddModifiers(Token(SyntaxKind.ThisKeyword));
 
-        MethodDeclarationSyntax method = MethodDeclaration(configuratorType, $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", "")}")
+        var methodIdentifier = $"AddPhazorReactiveFrom{Assembly.Name.Replace(".", string.Empty)}";
+
+        MethodDeclarationSyntax method = MethodDeclaration(configuratorType, methodIdentifier)
             .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword))
             .AddParameterListParameters(parameter)
             .AddBodyStatements(Factories.Select(x => ToRegistrationSyntax(x, parameter.Identifier)).ToArray())
@@ -61,7 +63,8 @@ public record RegistrationExtension(
         IdentifierNameSyntax eventType = IdentifierName(handler.Event.FullyQualifiedName);
         IdentifierNameSyntax handlerType = IdentifierName(handler.FullyQualifiedName);
 
-        GenericNameSyntax methodName = GenericName("AddEventHandler").AddTypeArgumentListArguments(eventType, handlerType);
+        GenericNameSyntax methodName =
+            GenericName("AddEventHandler").AddTypeArgumentListArguments(eventType, handlerType);
 
         MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,

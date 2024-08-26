@@ -5,6 +5,14 @@ namespace Phazor.Reactive.Generators;
 
 public static class Constants
 {
+    public const string ReactiveEntityMetadataName = "Phazor.Reactive.Abstractions.IReactiveEntity`1";
+    public const string ReactiveEventMetadataName = "Phazor.Reactive.Abstractions.IReactiveEvent`1";
+    public const string HandlerBuilderMetadataName = "Phazor.Reactive.Abstractions.ReactiveEventHandler`1";
+
+    public const string ObservableMetadataName = "System.IObservable`1";
+
+    public const string EnumerableMetadataName = "System.Collections.Generic.IEnumerable`1";
+
     public static readonly SyntaxToken EventHandlerIdentifier =
         Identifier("Phazor.Reactive.Abstractions.IReactiveEventHandler");
 
@@ -34,12 +42,4 @@ public static class Constants
 
     public static readonly SyntaxToken CancellationTokenParameter =
         Identifier("System.Threading.CancellationToken");
-
-    public const string ReactiveEntityMetadataName = "Phazor.Reactive.Abstractions.IReactiveEntity`1";
-    public const string ReactiveEventMetadataName = "Phazor.Reactive.Abstractions.IReactiveEvent`1";
-    public const string HandlerBuilderMetadataName = "Phazor.Reactive.Abstractions.ReactiveEventHandler`1";
-
-    public const string ObservableMetadataName = "System.IObservable`1";
-
-    public const string EnumerableMetadataName = "System.Collections.Generic.IEnumerable`1";
 }
