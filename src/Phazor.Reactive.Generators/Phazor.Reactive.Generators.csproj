@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <NoWarn>NU5128</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Phazor.Reactive.Generators</PackageId>
+        <Title>Phazor.Reactive.Generators</Title>
+        <Authors>itmo-is-dev</Authors>
+        <Description>Source generators for Phazor.Reactive</Description>
+        <PackageProjectUrl>https://github.com/itmo-is-dev/Phazor</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/itmo-is-dev/Phazor</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>1.0.$(PatchVersion)</Version>
+        <PackageReleaseNotes>
+            Added Phazor.Reactive generators
+        </PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common">
+            <PrivateAssets Condition="'$(Configuration)' == 'Release'">all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+            <PrivateAssets Condition="'$(Configuration)' == 'Release'">all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common">
+            <PrivateAssets Condition="'$(Configuration)' == 'Release'">all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="PolySharp" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+</Project>

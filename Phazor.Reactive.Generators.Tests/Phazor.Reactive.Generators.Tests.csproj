@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.XUnit"/>
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\Phazor.Reactive.Abstractions\Phazor.Reactive.Abstractions.csproj" />
+        <ProjectReference Include="..\src\Phazor.Reactive.Generators\Phazor.Reactive.Generators.csproj"/>
+        <ProjectReference Include="..\src\Phazor.Reactive\Phazor.Reactive.csproj" />
+    </ItemGroup>
+
+</Project>

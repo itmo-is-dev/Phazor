@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>Phazor.Reactive.Abstractions</Title>
+        <PackageId>Phazor.Reactive.Abstractions</PackageId>
+        <Authors>itmo-is-dev</Authors>
+        <PackageProjectUrl>https://github.com/itmo-is-dev/Phazor</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/itmo-is-dev/Phazor</RepositoryUrl>
+        <RepositoryType>github</RepositoryType>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>1.0.$(PatchVersion)</Version>
+        <PackageReleaseNotes>
+            Added Phazor.Reactive abstractions
+        </PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Reactive"/>
+    </ItemGroup>
+
+</Project>
