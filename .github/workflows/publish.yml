@@ -62,6 +62,9 @@ jobs:
           mkdir .packages
           mv src/Phazor.Components/bin/Release/*.nupkg .packages/
           mv src/Phazor.Extensions/bin/Release/*.nupkg .packages/
+          mv src/Phazor.Reactive/bin/Release/*.nupkg .packages/
+          mv src/Phazor.Reactive.Abstractions/bin/Release/*.nupkg .packages/
+          mv src/Phazor.Reactive.Generators/bin/Release/*.nupkg .packages/
   
   
   publish:
