@@ -24,7 +24,7 @@
     <PropertyGroup>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added Phazor.Reactive abstractions
+            Added TryAdd to configuration
         </PackageReleaseNotes>
     </PropertyGroup>
 

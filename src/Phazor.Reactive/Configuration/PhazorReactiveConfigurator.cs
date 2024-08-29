@@ -19,10 +19,10 @@ internal sealed class PhazorReactiveConfigurator : IPhazorReactiveConfigurator
         where TAlias : class, IReactiveEntityFactory<TEntity, TIdentifier>
         where TFactory : class, TAlias
     {
-        _collection.AddSingleton<TFactory>();
-        _collection.AddSingleton<TAlias>(provider => provider.GetRequiredService<TFactory>());
+        _collection.TryAddSingleton<TFactory>();
+        _collection.TryAddSingleton<TAlias>(provider => provider.GetRequiredService<TFactory>());
 
-        _collection.AddSingleton<IReactiveEntityFactory<TEntity, TIdentifier>>(
+        _collection.TryAddSingleton<IReactiveEntityFactory<TEntity, TIdentifier>>(
             provider => provider.GetRequiredService<TFactory>());
 
         return this;
@@ -36,7 +36,7 @@ internal sealed class PhazorReactiveConfigurator : IPhazorReactiveConfigurator
             IUntypedEventHandler,
             ReactiveEventHandlerWrapper<TEvent, THandler>>();
 
-        _collection.AddSingleton<THandler>();
+        _collection.TryAddSingleton<THandler>();
         _collection.TryAddEnumerable(descriptor);
 
         return this;
