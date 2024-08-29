@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using Phazor.Reactive.Abstractions;
 
 namespace Phazor.Reactive;
@@ -12,4 +13,6 @@ public interface IPhazorReactiveConfigurator
     IPhazorReactiveConfigurator AddEventHandler<TEvent, THandler>()
         where TEvent : IReactiveEvent<TEvent>
         where THandler : class, IReactiveEventHandler<TEvent>;
+
+    IPhazorReactiveConfigurator ConfigureOptions(Action<OptionsBuilder<PhazorReactiveOptions>> configuration);
 }

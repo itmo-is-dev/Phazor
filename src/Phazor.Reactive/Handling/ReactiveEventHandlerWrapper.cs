@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Phazor.Reactive.Abstractions;
 
 namespace Phazor.Reactive.Handling;
@@ -7,17 +9,32 @@ internal class ReactiveEventHandlerWrapper<THandlerEvent, THandler> : IUntypedEv
     where THandler : class, IReactiveEventHandler<THandlerEvent>
 {
     private readonly THandler _handler;
+    private readonly PhazorReactiveOptions _options;
+    private readonly ILogger<ReactiveEventHandlerWrapper<THandlerEvent, THandler>>? _logger;
 
-    public ReactiveEventHandlerWrapper(THandler handler)
+    public ReactiveEventHandlerWrapper(
+        THandler handler,
+        IOptions<PhazorReactiveOptions> options,
+        ILogger<ReactiveEventHandlerWrapper<THandlerEvent, THandler>>? logger = null)
     {
         _handler = handler;
+        _options = options.Value;
+        _logger = logger;
     }
 
-    public ValueTask TryHandleAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
+    public async ValueTask TryHandleAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IReactiveEvent<TEvent>
     {
-        return evt is THandlerEvent typedEvent
-            ? _handler.HandleAsync(typedEvent, cancellationToken)
-            : ValueTask.CompletedTask;
+        if (evt is not THandlerEvent typedEvent)
+            return;
+
+        if (_options.EnableTracing)
+        {
+            _logger?.LogTrace("Started handling of event = {Event}, by handler of type = {HandlerType}",
+                typedEvent,
+                typeof(THandler));
+        }
+
+        await _handler.HandleAsync(typedEvent, cancellationToken);
     }
 }

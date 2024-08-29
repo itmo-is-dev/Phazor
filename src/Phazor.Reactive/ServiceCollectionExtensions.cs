@@ -19,6 +19,8 @@ public static class ServiceCollectionExtensions
 
         collection.AddSingleton<IReactiveEventPublisher, ReactiveEventPublisher>();
 
+        collection.AddOptions<PhazorReactiveOptions>();
+
         var configurator = new PhazorReactiveConfigurator(collection);
         action?.Invoke(configurator);
 

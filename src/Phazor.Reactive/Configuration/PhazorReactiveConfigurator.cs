@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Phazor.Reactive.Abstractions;
 using Phazor.Reactive.Handling;
 
@@ -38,6 +39,14 @@ internal sealed class PhazorReactiveConfigurator : IPhazorReactiveConfigurator
 
         _collection.TryAddSingleton<THandler>();
         _collection.TryAddEnumerable(descriptor);
+
+        return this;
+    }
+
+    public IPhazorReactiveConfigurator ConfigureOptions(Action<OptionsBuilder<PhazorReactiveOptions>> configuration)
+    {
+        OptionsBuilder<PhazorReactiveOptions> builder = _collection.AddOptions<PhazorReactiveOptions>();
+        configuration.Invoke(builder);
 
         return this;
     }
