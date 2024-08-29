@@ -57,8 +57,7 @@ public record ReactiveEntity(
         if (existingType is { Constructors: not [] })
             yield break;
 
-        ParameterSyntax parameter = Parameter(Identifier("id"))
-            .WithType(IdentifierName(IdentifierType.GetFullyQualifiedName()));
+        ParameterSyntax parameter = Parameter(Identifier("id")).WithType(IdentifierType.ToNameSyntax());
 
         AssignmentExpressionSyntax assignment = AssignmentExpression(
             SyntaxKind.SimpleAssignmentExpression,
@@ -76,7 +75,7 @@ public record ReactiveEntity(
         AccessorDeclarationSyntax accessor = AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
 
-        return PropertyDeclaration(IdentifierName(IdentifierType.GetFullyQualifiedName()), "Id")
+        return PropertyDeclaration(IdentifierType.ToNameSyntax(), "Id")
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
             .AddAccessorListAccessors(accessor);
     }

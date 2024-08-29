@@ -7,5 +7,5 @@ namespace Phazor.Reactive.Generators.Extensions;
 public static class ParameterSymbolExtensions
 {
     public static ParameterSyntax ToParameterSyntax(this IParameterSymbol parameter)
-        => Parameter(Identifier(parameter.Name)).WithType(IdentifierName(parameter.Type.GetFullyQualifiedName()));
+        => Parameter(Identifier(parameter.Name)).WithType(parameter.Type.ToNameSyntax());
 }

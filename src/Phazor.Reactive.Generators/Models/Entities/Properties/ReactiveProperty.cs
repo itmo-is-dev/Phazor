@@ -16,10 +16,13 @@ public record ReactiveProperty(IPropertySymbol Property, INamedTypeSymbol Type) 
 
     public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax()
     {
-        IdentifierNameSyntax valueType = IdentifierName(Type.GetFullyQualifiedName());
+        TypeSyntax valueType = Type.ToNameSyntax();
 
         EqualsValueClauseSyntax fieldInitializer = EqualsValueClause(ImplicitObjectCreationExpression());
-        VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name).WithInitializer(fieldInitializer);
+
+        VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name)
+            .WithInitializer(fieldInitializer);
+
         GenericNameSyntax fieldType = FieldTypeName.AddTypeArgumentListArguments(valueType);
         VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(fieldType).AddVariables(fieldDeclarator);
 

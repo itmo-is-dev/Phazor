@@ -8,11 +8,8 @@ namespace Phazor.Reactive.Generators.Models.Entities;
 
 public record EntityFactory(ReactiveEntity Entity)
 {
-    private readonly IdentifierNameSyntax _entityInterfaceType =
-        IdentifierName(Entity.InterfaceType.GetFullyQualifiedName());
-
-    private readonly IdentifierNameSyntax _identifierType =
-        IdentifierName(Entity.IdentifierType.GetFullyQualifiedName());
+    private readonly TypeSyntax _entityInterfaceType = Entity.InterfaceType.ToNameSyntax();
+    private readonly TypeSyntax _identifierType = Entity.IdentifierType.ToNameSyntax();
 
     public BackingField Field { get; } = BackingField.ForEntityFactory(Entity);
 
@@ -28,7 +25,6 @@ public record EntityFactory(ReactiveEntity Entity)
         GenericNameSyntax baseType = GenericName(Constants.ReactiveFactoryBaseIdentifier)
             .AddTypeArgumentListArguments(_entityInterfaceType)
             .AddTypeArgumentListArguments(_identifierType);
-
 
         return ClassDeclaration(Name)
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.SealedKeyword))
@@ -66,10 +62,9 @@ public record EntityFactory(ReactiveEntity Entity)
 
         foreach (IParameterSymbol parameter in parameters)
         {
-            string typeName = parameter.Type.GetFullyQualifiedName();
             VariableDeclaratorSyntax declarator = VariableDeclarator(Identifier(parameter.Name));
 
-            VariableDeclarationSyntax declaration = VariableDeclaration(IdentifierName(typeName))
+            VariableDeclarationSyntax declaration = VariableDeclaration(parameter.Type.ToNameSyntax())
                 .AddVariables(declarator);
 
             yield return FieldDeclaration(declaration)

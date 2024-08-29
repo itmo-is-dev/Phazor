@@ -24,7 +24,7 @@
     <PropertyGroup>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added TryAdd to configuration
+            Fixed generic parameter generation
         </PackageReleaseNotes>
     </PropertyGroup>
 

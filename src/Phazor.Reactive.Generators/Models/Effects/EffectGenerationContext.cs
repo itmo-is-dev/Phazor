@@ -35,7 +35,9 @@ public class EffectGenerationContext(IEnumerable<ReactiveEntity> entities)
         foreach (EntityFactory factory in _factories.Values)
         {
             VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(factory.Field.Name);
-            VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(GetFactoryType(factory)).AddVariables(fieldDeclarator);
+
+            VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(GetFactoryType(factory))
+                .AddVariables(fieldDeclarator);
 
             yield return FieldDeclaration(fieldDeclaration)
                 .AddModifiers(Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.ReadOnlyKeyword));
@@ -63,10 +65,8 @@ public class EffectGenerationContext(IEnumerable<ReactiveEntity> entities)
 
     private GenericNameSyntax GetFactoryType(EntityFactory factory)
     {
-        string identifierType = GetEntity(factory.Entity.InterfaceType).IdentifierType.GetFullyQualifiedName();
-
         return GenericName(Constants.EntityFactoryIdentifier)
-            .AddTypeArgumentListArguments(IdentifierName(factory.Entity.InterfaceType.GetFullyQualifiedName()))
-            .AddTypeArgumentListArguments(IdentifierName(identifierType));
+            .AddTypeArgumentListArguments(factory.Entity.InterfaceType.ToNameSyntax())
+            .AddTypeArgumentListArguments(GetEntity(factory.Entity.InterfaceType).IdentifierType.ToNameSyntax());
     }
 }

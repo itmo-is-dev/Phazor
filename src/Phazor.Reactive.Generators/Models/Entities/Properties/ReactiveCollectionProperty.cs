@@ -22,11 +22,14 @@ public record ReactiveCollectionProperty(IPropertySymbol Property, INamedTypeSym
 
     public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax()
     {
-        IdentifierNameSyntax elementType = IdentifierName(ElementType.GetFullyQualifiedName());
+        TypeSyntax elementType = ElementType.ToNameSyntax();
         GenericNameSyntax enumerableType = EnumerableTypeName.AddTypeArgumentListArguments(elementType);
 
         EqualsValueClauseSyntax fieldInitializer = EqualsValueClause(ImplicitObjectCreationExpression());
-        VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name).WithInitializer(fieldInitializer);
+
+        VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name)
+            .WithInitializer(fieldInitializer);
+
         GenericNameSyntax fieldType = FieldTypeName.AddTypeArgumentListArguments(elementType);
         VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(fieldType).AddVariables(fieldDeclarator);
 
