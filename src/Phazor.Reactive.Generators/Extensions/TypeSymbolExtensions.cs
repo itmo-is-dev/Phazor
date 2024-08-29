@@ -15,7 +15,7 @@ public static class TypeSymbolExtensions
     public static IdentifierNameSyntax ToTypeArgumentSyntax(this ITypeSymbol symbol)
         => IdentifierName(symbol.GetFullyQualifiedName());
 
-    public static TypeSyntax ToNameSyntax(this INamespaceOrTypeSymbol symbol, bool fullyQualified = false)
+    public static TypeSyntax ToNameSyntax(this INamespaceOrTypeSymbol symbol, bool fullyQualified = true)
     {
         IReadOnlyCollection<IdentifierNameSyntax> typeParameters = symbol switch
         {
