@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Phazor.Reactive.Abstractions;
 using Phazor.Reactive.Handling;
 
@@ -5,17 +6,17 @@ namespace Phazor.Reactive.Services;
 
 internal class ReactiveEventPublisher : IReactiveEventPublisher
 {
-    private readonly IReadOnlyCollection<IUntypedEventHandler> _handlers;
+    private readonly IServiceProvider _provider;
 
-    public ReactiveEventPublisher(IEnumerable<IUntypedEventHandler> wrappers)
+    public ReactiveEventPublisher(IServiceProvider provider)
     {
-        _handlers = wrappers.ToArray();
+        _provider = provider;
     }
 
     public async ValueTask PublishAsync<TEvent>(TEvent evt, CancellationToken cancellationToken)
         where TEvent : IReactiveEvent<TEvent>
     {
-        foreach (IUntypedEventHandler handler in _handlers)
+        foreach (IUntypedEventHandler handler in _provider.GetRequiredService<IEnumerable<IUntypedEventHandler>>())
         {
             await handler.TryHandleAsync(evt, cancellationToken);
         }
