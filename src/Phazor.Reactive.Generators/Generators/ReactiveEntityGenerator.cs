@@ -50,7 +50,7 @@ public class ReactiveEntityGenerator : ISourceGenerator
 
     private static void GenerateEntity(ReactiveEntity entity, GeneratorExecutionContext context)
     {
-        TypeDeclarationSyntax typeSyntax = entity.ToSyntax();
+        TypeDeclarationSyntax typeSyntax = entity.ToSyntax(context);
         IdentifierNameSyntax namespaceIdentifier =
             IdentifierName(entity.InterfaceType.ContainingNamespace.ToDisplayString());
         NamespaceDeclarationSyntax namespaceSyntax = NamespaceDeclaration(namespaceIdentifier).AddMembers(typeSyntax);
@@ -64,7 +64,7 @@ public class ReactiveEntityGenerator : ISourceGenerator
 
     private static void GenerateEntityFactory(EntityFactory factory, GeneratorExecutionContext context)
     {
-        ClassDeclarationSyntax typeSyntax = factory.ToFactorySyntax();
+        ClassDeclarationSyntax typeSyntax = factory.ToFactorySyntax(context);
 
         IdentifierNameSyntax namespaceIdentifier = IdentifierName(
             factory.Entity.InterfaceType.ContainingNamespace.ToDisplayString());

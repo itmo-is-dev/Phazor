@@ -20,11 +20,11 @@ public record ReactiveEntity(
     public IReactiveProperty GetProperty(IPropertySymbol property)
         => Properties.Single(x => x.PropertySymbol.EqualsDefault(property));
 
-    public TypeDeclarationSyntax ToSyntax()
+    public TypeDeclarationSyntax ToSyntax(GeneratorExecutionContext context)
     {
         MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax())
             .Prepend(GenerateIdentifierProperty())
-            .Append(GenerateIdentifierConstructor())
+            .Concat(GenerateIdentifierConstructor(context))
             .Append(GenerateDisposeMethod())
             .Append(GenerateDestructorSyntax())
             .OrderBy(member => member switch
@@ -50,16 +50,22 @@ public record ReactiveEntity(
     private static string GenerateTypeName(INamedTypeSymbol interfaceName)
         => interfaceName.Name[0] is 'I' ? interfaceName.Name[1..] : $"{interfaceName.Name}Impl";
 
-    private ConstructorDeclarationSyntax GenerateIdentifierConstructor()
+    private IEnumerable<ConstructorDeclarationSyntax> GenerateIdentifierConstructor(GeneratorExecutionContext context)
     {
-        ParameterSyntax parameter = Parameter(Identifier("id")).WithType(IdentifierName(IdentifierType.GetFullyQualifiedName()));
+        INamedTypeSymbol? existingType = context.Compilation.GetTypeByMetadataName(FullyQualifiedName);
+
+        if (existingType is { Constructors: not [] })
+            yield break;
+
+        ParameterSyntax parameter = Parameter(Identifier("id"))
+            .WithType(IdentifierName(IdentifierType.GetFullyQualifiedName()));
 
         AssignmentExpressionSyntax assignment = AssignmentExpression(
             SyntaxKind.SimpleAssignmentExpression,
             IdentifierName("Id"),
             IdentifierName("id"));
 
-        return ConstructorDeclaration(Name)
+        yield return ConstructorDeclaration(Name)
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
             .AddParameterListParameters(parameter)
             .AddBodyStatements(ExpressionStatement(assignment));
