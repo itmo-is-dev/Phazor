@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Phazor.Reactive.Abstractions;
 using Phazor.Reactive.Handling;
@@ -38,7 +39,25 @@ internal sealed class PhazorReactiveConfigurator : IPhazorReactiveConfigurator
             ReactiveEventHandlerWrapper<TEvent, THandler>>();
 
         _collection.TryAddSingleton<THandler>();
-        _collection.TryAddEnumerable(descriptor);
+        _collection.Add(descriptor);
+
+        return this;
+    }
+
+    public IPhazorReactiveConfigurator AddEventHandler<TEvent, THandler>(Func<IServiceProvider, THandler> factory)
+        where TEvent : IReactiveEvent<TEvent>
+        where THandler : class, IReactiveEventHandler<TEvent>
+    {
+        var descriptor = ServiceDescriptor.Singleton<
+            IUntypedEventHandler,
+            ReactiveEventHandlerWrapper<TEvent, THandler>>(
+            implementationFactory: p => new ReactiveEventHandlerWrapper<TEvent, THandler>(
+                factory.Invoke(p),
+                p.GetRequiredService<IOptions<PhazorReactiveOptions>>(),
+                p.GetService<ILogger<ReactiveEventHandlerWrapper<TEvent, THandler>>>()));
+
+        _collection.TryAddSingleton<THandler>();
+        _collection.Add(descriptor);
 
         return this;
     }

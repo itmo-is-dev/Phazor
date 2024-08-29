@@ -14,5 +14,9 @@ public interface IPhazorReactiveConfigurator
         where TEvent : IReactiveEvent<TEvent>
         where THandler : class, IReactiveEventHandler<TEvent>;
 
+    IPhazorReactiveConfigurator AddEventHandler<TEvent, THandler>(Func<IServiceProvider, THandler> factory)
+        where TEvent : IReactiveEvent<TEvent>
+        where THandler : class, IReactiveEventHandler<TEvent>;
+
     IPhazorReactiveConfigurator ConfigureOptions(Action<OptionsBuilder<PhazorReactiveOptions>> configuration);
 }
