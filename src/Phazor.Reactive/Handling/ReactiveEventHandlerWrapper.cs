@@ -30,7 +30,7 @@ internal class ReactiveEventHandlerWrapper<THandlerEvent, THandler> : IUntypedEv
 
         if (_options.EnableTracing)
         {
-            _logger?.LogTrace("Started handling of event = {Event}, by handler of type = {HandlerType}",
+            _logger?.LogInformation("Started handling of event = {Event}, by handler of type = {HandlerType}",
                 typedEvent,
                 typeof(THandler));
         }
