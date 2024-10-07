@@ -9,5 +9,5 @@ public interface IReactiveProperty
 
     BackingField BackingField { get; }
 
-    IEnumerable<MemberDeclarationSyntax> ToMemberSyntax();
+    IEnumerable<MemberDeclarationSyntax> ToMemberSyntax(GeneratorExecutionContext context);
 }

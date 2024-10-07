@@ -14,7 +14,7 @@ public record ReactiveProperty(IPropertySymbol Property, INamedTypeSymbol Type) 
     public IPropertySymbol PropertySymbol { get; } = Property;
     public BackingField BackingField { get; } = BackingField.ForReactiveProperty(Property);
 
-    public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax()
+    public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax(GeneratorExecutionContext context)
     {
         TypeSyntax valueType = Type.ToNameSyntax();
 

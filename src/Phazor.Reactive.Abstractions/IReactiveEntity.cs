@@ -1,6 +1,6 @@
 namespace Phazor.Reactive.Abstractions;
 
-public interface IReactiveEntity<out TId> : IDisposable
+public interface IReactiveEntity<TId> : IDisposable
 {
     TId Id { get; }
 }

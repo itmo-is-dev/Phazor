@@ -2,7 +2,7 @@ using System.Reactive.Subjects;
 
 namespace Phazor.Reactive;
 
-public class ReactiveCollectionProperty<T> : IObservable<IEnumerable<T>>, IDisposable
+public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
 {
     private readonly List<T> _values = [];
     private readonly ReplaySubject<IEnumerable<T>> _subject = new(1);
@@ -33,7 +33,7 @@ public class ReactiveCollectionProperty<T> : IObservable<IEnumerable<T>>, IDispo
 
     public void Remove(IEnumerable<T> values)
     {
-        foreach (T? value in values)
+        foreach (T value in values)
             _values.Remove(value);
 
         _subject.OnNext(_values);

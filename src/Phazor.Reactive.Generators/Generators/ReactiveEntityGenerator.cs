@@ -114,6 +114,9 @@ public class ReactiveEntityGenerator : ISourceGenerator
         IEnumerable<ReactiveEntity> entities,
         GeneratorExecutionContext context)
     {
+        if (evt.Effects.Count is 0)
+            return;
+
         var handler = new ReactiveEventHandler(evt);
 
         ClassDeclarationSyntax typeSyntax = handler.ToSyntax(entities);

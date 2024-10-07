@@ -52,4 +52,41 @@ public static class TypeSymbolExtensions
 
         return type;
     }
+
+    public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this INamedTypeSymbol symbol)
+    {
+        return symbol.BaseType is null
+            ? []
+            : Enumerable.Repeat(symbol.BaseType, 1).Concat(symbol.BaseType.GetBaseTypes());
+    }
+
+    public static IEnumerable<INamedTypeSymbol> GetBaseTypesAndInterfaces(this INamedTypeSymbol symbol)
+    {
+        return symbol.GetBaseTypes().Concat(symbol.AllInterfaces);
+    }
+
+    public static IEnumerable<INamedTypeSymbol> FindAssignableTypesConstructedFrom(
+        this ITypeSymbol type,
+        INamedTypeSymbol baseType)
+    {
+        if (type is not INamedTypeSymbol namedTypeSymbol)
+            return Enumerable.Empty<INamedTypeSymbol>();
+
+        IEnumerable<INamedTypeSymbol> baseTypes = namedTypeSymbol.GetBaseTypesAndInterfaces();
+
+        return baseTypes
+            .Where(current =>
+                current.ConstructedFrom.Equals(baseType, SymbolEqualityComparer.Default));
+    }
+
+    public static INamedTypeSymbol? FindAssignableTypeConstructedFrom(
+        this ITypeSymbol type,
+        INamedTypeSymbol baseType)
+    {
+        IEnumerable<INamedTypeSymbol> symbols = type.FindAssignableTypesConstructedFrom(baseType);
+
+        return symbols
+            .FirstOrDefault(current =>
+                current.ConstructedFrom.Equals(baseType, SymbolEqualityComparer.Default));
+    }
 }

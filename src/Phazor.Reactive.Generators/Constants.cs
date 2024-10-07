@@ -31,6 +31,9 @@ public static class Constants
     public static readonly SyntaxToken ReactiveCollectionPropertyIdentifier =
         Identifier("Phazor.Reactive.ReactiveCollectionProperty");
 
+    public static readonly SyntaxToken ReactiveEntityCollectionPropertyIdentifier =
+        Identifier("Phazor.Reactive.ReactiveEntityCollectionProperty");
+
     public static readonly SyntaxToken ReactiveFactoryBaseIdentifier =
         Identifier("Phazor.Reactive.ReactiveEntityFactory");
 
@@ -42,6 +45,9 @@ public static class Constants
 
     public static readonly SyntaxToken EnumerableIdentifier =
         Identifier("System.Collections.Generic.IEnumerable");
+
+    public static readonly SyntaxToken EquatableIdentifier =
+        Identifier("System.IEquatable");
 
     public static readonly SyntaxToken ValueTaskIdentifier =
         Identifier("System.Threading.Tasks.ValueTask");

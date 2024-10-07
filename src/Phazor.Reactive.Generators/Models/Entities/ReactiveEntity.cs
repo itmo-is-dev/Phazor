@@ -22,10 +22,13 @@ public record ReactiveEntity(
 
     public TypeDeclarationSyntax ToSyntax(GeneratorExecutionContext context)
     {
-        MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax())
+        MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax(context))
             .Prepend(GenerateIdentifierProperty())
             .Concat(GenerateIdentifierConstructor(context))
             .Append(GenerateDisposeMethod())
+            .Append(GenerateTypedEqualsMethod())
+            .Append(GenerateUntypedEqualsMethod())
+            .Append(GenerateGetHashCodeMethod())
             .Append(GenerateDestructorSyntax())
             .OrderBy(member => member switch
             {
@@ -38,12 +41,17 @@ public record ReactiveEntity(
             })
             .ToArray();
 
+        GenericNameSyntax equatableType = GenericName(Constants.EquatableIdentifier)
+            .AddTypeArgumentListArguments(IdentifierName(Name));
+
         return ClassDeclaration(Name)
             .AddModifiers(
                 Token(SyntaxKind.InternalKeyword),
                 Token(SyntaxKind.SealedKeyword),
                 Token(SyntaxKind.PartialKeyword))
-            .AddBaseListTypes(SimpleBaseType(IdentifierName(InterfaceType.GetFullyQualifiedName())))
+            .AddBaseListTypes(
+                SimpleBaseType(IdentifierName(InterfaceType.GetFullyQualifiedName())),
+                SimpleBaseType(equatableType))
             .AddMembers(members);
     }
 
@@ -104,5 +112,54 @@ public record ReactiveEntity(
     {
         return DestructorDeclaration(Identifier(Name))
             .AddBodyStatements(ExpressionStatement(InvocationExpression(IdentifierName("Dispose"))));
+    }
+
+    private MethodDeclarationSyntax GenerateTypedEqualsMethod()
+    {
+        const string parameterName = "other";
+
+        ParameterSyntax parameter = Parameter(Identifier(parameterName)).WithType(NullableType(IdentifierName(Name)));
+
+        BinaryExpressionSyntax expression = BinaryExpression(
+            SyntaxKind.EqualsExpression,
+            IdentifierName("Id"),
+            ConditionalAccessExpression(IdentifierName(parameterName), MemberBindingExpression(IdentifierName("Id"))));
+
+        return MethodDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier("Equals"))
+            .AddModifiers(Token(SyntaxKind.PublicKeyword))
+            .AddParameterListParameters(parameter)
+            .AddBodyStatements(ReturnStatement(expression));
+    }
+
+    private MethodDeclarationSyntax GenerateUntypedEqualsMethod()
+    {
+        const string parameterName = "obj";
+
+        NullableTypeSyntax parameterType = NullableType(PredefinedType(Token(SyntaxKind.ObjectKeyword)));
+
+        BinaryExpressionSyntax expression = BinaryExpression(
+            SyntaxKind.AsExpression,
+            IdentifierName("obj"),
+            IdentifierName(Name));
+
+        InvocationExpressionSyntax invocation = InvocationExpression(IdentifierName("Equals"))
+            .AddArgumentListArguments(Argument(expression));
+
+        return MethodDeclaration(PredefinedType(Token(SyntaxKind.BoolKeyword)), Identifier("Equals"))
+            .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.OverrideKeyword))
+            .AddParameterListParameters(Parameter(Identifier(parameterName)).WithType(parameterType))
+            .AddBodyStatements(ReturnStatement(invocation));
+    }
+
+    private MethodDeclarationSyntax GenerateGetHashCodeMethod()
+    {
+        MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            IdentifierName("Id"),
+            IdentifierName("GetHashCode"));
+
+        return MethodDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("GetHashCode"))
+            .AddModifiers(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.OverrideKeyword))
+            .AddBodyStatements(ReturnStatement(InvocationExpression(memberAccess)));
     }
 }

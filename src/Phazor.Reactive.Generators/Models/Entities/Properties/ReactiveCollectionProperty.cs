@@ -11,6 +11,9 @@ public record ReactiveCollectionProperty(IPropertySymbol Property, INamedTypeSym
     private static readonly GenericNameSyntax FieldTypeName =
         GenericName(Constants.ReactiveCollectionPropertyIdentifier);
 
+    private static readonly GenericNameSyntax EntityFieldTypeName =
+        GenericName(Constants.ReactiveEntityCollectionPropertyIdentifier);
+
     private static readonly GenericNameSyntax ObservableTypeName =
         GenericName(Constants.ObservableIdentifier);
 
@@ -20,7 +23,7 @@ public record ReactiveCollectionProperty(IPropertySymbol Property, INamedTypeSym
     public IPropertySymbol PropertySymbol { get; } = Property;
     public BackingField BackingField { get; } = BackingField.ForReactiveProperty(Property);
 
-    public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax()
+    public IEnumerable<MemberDeclarationSyntax> ToMemberSyntax(GeneratorExecutionContext context)
     {
         TypeSyntax elementType = ElementType.ToNameSyntax();
         GenericNameSyntax enumerableType = EnumerableTypeName.AddTypeArgumentListArguments(elementType);
@@ -30,7 +33,7 @@ public record ReactiveCollectionProperty(IPropertySymbol Property, INamedTypeSym
         VariableDeclaratorSyntax fieldDeclarator = VariableDeclarator(BackingField.Name)
             .WithInitializer(fieldInitializer);
 
-        GenericNameSyntax fieldType = FieldTypeName.AddTypeArgumentListArguments(elementType);
+        GenericNameSyntax fieldType = GetFieldNameSyntax(context).AddTypeArgumentListArguments(elementType);
         VariableDeclarationSyntax fieldDeclaration = VariableDeclaration(fieldType).AddVariables(fieldDeclarator);
 
         yield return FieldDeclaration(fieldDeclaration)
@@ -44,5 +47,21 @@ public record ReactiveCollectionProperty(IPropertySymbol Property, INamedTypeSym
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
             .WithExpressionBody(propertyBody)
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+    }
+
+    private GenericNameSyntax GetFieldNameSyntax(GeneratorExecutionContext context)
+    {
+        INamedTypeSymbol? entityType = context.Compilation.GetTypeByMetadataName(Constants.ReactiveEntityMetadataName);
+
+        if (entityType is null)
+            return FieldTypeName;
+
+        INamedTypeSymbol? madeEntityType = ElementType.FindAssignableTypeConstructedFrom(entityType);
+
+        if (madeEntityType is null)
+            return FieldTypeName;
+
+        ITypeSymbol identifierType = madeEntityType.TypeArguments.Single();
+        return EntityFieldTypeName.AddTypeArgumentListArguments(identifierType.ToNameSyntax());
     }
 }
