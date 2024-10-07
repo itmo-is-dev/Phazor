@@ -4,7 +4,7 @@ using Phazor.Reactive.Generators.Models.Effects;
 
 namespace Phazor.Reactive.Generators.Models.Events;
 
-public record ReactiveEvent(INamedTypeSymbol EventType, IReadOnlyCollection<EntityEffect> Effects)
+public record ReactiveEvent(INamedTypeSymbol EventType, IReadOnlyList<EntityEffect> Effects)
 {
     public string Name { get; } = EventType.Name;
 

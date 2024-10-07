@@ -40,18 +40,23 @@ public class ReactiveEntityGenerator : ISourceGenerator
             GenerateEntityFactoryAlias(factory, context);
         }
 
+        var handlers = new List<ReactiveEventHandler>();
+
         foreach (ReactiveEvent evt in receiver.Events)
         {
             if (context.CancellationToken.IsCancellationRequested)
                 return;
 
-            GenerateEventHandler(evt, receiver.Entities, context);
+            ReactiveEventHandler? handler = GenerateEventHandler(evt, receiver.Entities, context);
+
+            if (handler is not null)
+                handlers.Add(handler);
         }
 
         var registration = new RegistrationExtension(
             context.Compilation.Assembly,
             Factories: receiver.Entities.Select(x => new EntityFactory(x)).ToArray(),
-            EventHandlers: receiver.Events.Select(x => new ReactiveEventHandler(x)).ToArray());
+            EventHandlers: handlers);
 
         GenerateRegistration(registration, context);
     }
@@ -109,13 +114,13 @@ public class ReactiveEntityGenerator : ISourceGenerator
         context.AddSource(fileName, text);
     }
 
-    private static void GenerateEventHandler(
+    private static ReactiveEventHandler? GenerateEventHandler(
         ReactiveEvent evt,
         IEnumerable<ReactiveEntity> entities,
         GeneratorExecutionContext context)
     {
         if (evt.Effects.Count is 0)
-            return;
+            return null;
 
         var handler = new ReactiveEventHandler(evt);
 
@@ -131,6 +136,8 @@ public class ReactiveEntityGenerator : ISourceGenerator
         string fileName = $"{handler.FullyQualifiedName}.cs";
 
         context.AddSource(fileName, text);
+
+        return handler;
     }
 
     private static void GenerateRegistration(RegistrationExtension registration, GeneratorExecutionContext context)
