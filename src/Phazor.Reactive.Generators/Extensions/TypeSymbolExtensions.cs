@@ -6,8 +6,11 @@ namespace Phazor.Reactive.Generators.Extensions;
 
 public static class TypeSymbolExtensions
 {
+    private static readonly SymbolDisplayFormat SymbolFormat = SymbolDisplayFormat.FullyQualifiedFormat
+        .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
+
     public static string GetFullyQualifiedName(this INamespaceOrTypeSymbol symbol)
-        => $"{symbol.ContainingNamespace.ToDisplayString()}.{symbol.Name}";
+        => symbol.ToDisplayString(SymbolFormat);
 
     public static IEnumerable<IdentifierNameSyntax> ToTypeArgumentSyntax(this IEnumerable<ITypeSymbol> symbols)
         => symbols.Select(ToTypeArgumentSyntax);

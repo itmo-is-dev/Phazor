@@ -28,16 +28,18 @@ public class ReactiveEntityGenerator : ISourceGenerator
         if (context.SyntaxContextReceiver is not ReactiveEntitySyntaxReceiver receiver)
             return;
 
-        foreach (ReactiveEntity entity in receiver.Entities)
+        ReactiveEntityContext[] entityContexts = receiver.Entities
+            .Select(x => new ReactiveEntityContext(x, new EntityFactory(x)))
+            .ToArray();
+
+        foreach (ReactiveEntityContext entityContext in entityContexts)
         {
             if (context.CancellationToken.IsCancellationRequested)
                 return;
 
-            var factory = new EntityFactory(entity);
-
-            GenerateEntity(entity, context);
-            GenerateEntityFactory(factory, context);
-            GenerateEntityFactoryAlias(factory, context);
+            GenerateEntity(entityContext.Entity, context);
+            GenerateEntityFactory(context, entityContext.Factory, entityContexts);
+            GenerateEntityFactoryAlias(entityContext.Factory, context);
         }
 
         var handlers = new List<ReactiveEventHandler>();
@@ -78,9 +80,12 @@ public class ReactiveEntityGenerator : ISourceGenerator
         context.AddSource(fileName, text);
     }
 
-    private static void GenerateEntityFactory(EntityFactory factory, GeneratorExecutionContext context)
+    private static void GenerateEntityFactory(
+        GeneratorExecutionContext context,
+        EntityFactory factory,
+        IReadOnlyCollection<ReactiveEntityContext> entityContexts)
     {
-        ClassDeclarationSyntax typeSyntax = factory.ToFactorySyntax(context);
+        ClassDeclarationSyntax typeSyntax = factory.ToFactorySyntax(context, entityContexts);
 
         IdentifierNameSyntax namespaceIdentifier = IdentifierName(
             factory.Entity.InterfaceType.ContainingNamespace.ToDisplayString());

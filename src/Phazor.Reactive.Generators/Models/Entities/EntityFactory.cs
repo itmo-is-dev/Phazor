@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Phazor.Reactive.Generators.Extensions;
+using System.Diagnostics.CodeAnalysis;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Phazor.Reactive.Generators.Models.Entities;
@@ -20,7 +21,9 @@ public record EntityFactory(ReactiveEntity Entity)
 
     public string AliasFullyQualifiedName { get; } = $"{Entity.InterfaceType.GetFullyQualifiedName()}Factory";
 
-    public ClassDeclarationSyntax ToFactorySyntax(GeneratorExecutionContext context)
+    public ClassDeclarationSyntax ToFactorySyntax(
+        GeneratorExecutionContext context,
+        IReadOnlyCollection<ReactiveEntityContext> entityContexts)
     {
         GenericNameSyntax baseType = GenericName(Constants.ReactiveFactoryBaseIdentifier)
             .AddTypeArgumentListArguments(_entityInterfaceType)
@@ -30,8 +33,8 @@ public record EntityFactory(ReactiveEntity Entity)
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.SealedKeyword))
             .AddBaseListTypes(SimpleBaseType(baseType))
             .AddBaseListTypes(SimpleBaseType(IdentifierName(AliasFullyQualifiedName)))
-            .AddMembers(GenerateFields(context).ToArray())
-            .AddMembers(GenerateConstructor(context).ToArray())
+            .AddMembers(GenerateFields(context, entityContexts).ToArray())
+            .AddMembers(GenerateConstructor(context, entityContexts).ToArray())
             .AddMembers(GenerateCreateMethod(context));
     }
 
@@ -46,7 +49,9 @@ public record EntityFactory(ReactiveEntity Entity)
             .AddBaseListTypes(SimpleBaseType(baseType));
     }
 
-    private IEnumerable<MemberDeclarationSyntax> GenerateFields(GeneratorExecutionContext context)
+    private IEnumerable<MemberDeclarationSyntax> GenerateFields(
+        GeneratorExecutionContext context,
+        IReadOnlyCollection<ReactiveEntityContext> entityContexts)
     {
         INamedTypeSymbol? existingType = context.Compilation.GetTypeByMetadataName(Entity.FullyQualifiedName);
 
@@ -64,7 +69,13 @@ public record EntityFactory(ReactiveEntity Entity)
         {
             VariableDeclaratorSyntax declarator = VariableDeclarator(Identifier(parameter.Name));
 
-            VariableDeclarationSyntax declaration = VariableDeclaration(parameter.Type.ToNameSyntax())
+            TypeSyntax fieldType =
+                parameter.Type is IErrorTypeSymbol errorTypeSymbol
+                && TryFindEntityTypeName(errorTypeSymbol, entityContexts, out TypeSyntax? typeName)
+                    ? typeName
+                    : parameter.Type.ToNameSyntax();
+
+            VariableDeclarationSyntax declaration = VariableDeclaration(fieldType)
                 .AddVariables(declarator);
 
             yield return FieldDeclaration(declaration)
@@ -72,7 +83,9 @@ public record EntityFactory(ReactiveEntity Entity)
         }
     }
 
-    private IEnumerable<MemberDeclarationSyntax> GenerateConstructor(GeneratorExecutionContext context)
+    private IEnumerable<MemberDeclarationSyntax> GenerateConstructor(
+        GeneratorExecutionContext context,
+        IReadOnlyCollection<ReactiveEntityContext> entityContexts)
     {
         INamedTypeSymbol? existingType = context.Compilation.GetTypeByMetadataName(Entity.FullyQualifiedName);
 
@@ -81,7 +94,7 @@ public record EntityFactory(ReactiveEntity Entity)
 
         ParameterSyntax[] parameters = constructor.Parameters
             .Where(x => x.Type.EqualsDefault(Entity.IdentifierType) is false)
-            .Select(parameter => parameter.ToParameterSyntax())
+            .Select(MapToParameterSyntax)
             .ToArray();
 
         StatementSyntax[] statements = constructor.Parameters
@@ -108,6 +121,17 @@ public record EntityFactory(ReactiveEntity Entity)
                 SyntaxKind.SimpleAssignmentExpression,
                 memberAccess,
                 IdentifierName(parameter.Name));
+        }
+
+        ParameterSyntax MapToParameterSyntax(IParameterSymbol parameter)
+        {
+            TypeSyntax fieldType =
+                parameter.Type is IErrorTypeSymbol errorTypeSymbol
+                && TryFindEntityTypeName(errorTypeSymbol, entityContexts, out TypeSyntax? typeName)
+                    ? typeName
+                    : parameter.Type.ToNameSyntax();
+
+            return Parameter(Identifier(parameter.Name)).WithType(fieldType);
         }
     }
 
@@ -146,5 +170,23 @@ public record EntityFactory(ReactiveEntity Entity)
             .AddModifiers(Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.OverrideKeyword))
             .AddParameterListParameters(Parameter(Identifier("id")).WithType(_identifierType))
             .AddBodyStatements(ReturnStatement(objectCreation));
+    }
+
+    private static bool TryFindEntityTypeName(
+        IErrorTypeSymbol symbol,
+        IReadOnlyCollection<ReactiveEntityContext> entityContexts,
+        [NotNullWhen(true)] out TypeSyntax? typeName)
+    {
+        ReactiveEntityContext? context = entityContexts
+            .SingleOrDefault(x => symbol.Name.Equals(x.Factory.AliasName, StringComparison.OrdinalIgnoreCase));
+
+        if (context is null)
+        {
+            typeName = null;
+            return false;
+        }
+
+        typeName = IdentifierName(context.Factory.AliasFullyQualifiedName);
+        return true;
     }
 }
