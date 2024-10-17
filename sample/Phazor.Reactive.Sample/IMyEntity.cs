@@ -8,6 +8,7 @@ public interface IMyEntity : IReactiveEntity<long>
 {
     IObservable<int> Value { get; }
     IObservable<int?> NullableValue { get; }
+    IObservable<string?> NullableReferenceValue { get; }
     IObservable<IEnumerable<int>> Collection { get; }
     IObservable<IEnumerable<IOtherEntity>> OtherEntities { get; }
 }

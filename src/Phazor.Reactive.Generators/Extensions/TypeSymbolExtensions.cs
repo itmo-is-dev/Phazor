@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics.CodeAnalysis;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Phazor.Reactive.Generators.Extensions;
@@ -8,7 +9,7 @@ public static class TypeSymbolExtensions
 {
     private static SymbolDisplayFormat ConfigureDisplayFormat(SymbolDisplayFormat format) => format
         .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
-        .WithGenericsOptions(SymbolDisplayGenericsOptions.IncludeTypeParameters);
+        .WithGenericsOptions(SymbolDisplayGenericsOptions.None);
 
     private static readonly SymbolDisplayFormat FullyQualifiedSymbolFormat =
         ConfigureDisplayFormat(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -16,22 +17,53 @@ public static class TypeSymbolExtensions
     private static readonly SymbolDisplayFormat ShortSymbolFormat =
         ConfigureDisplayFormat(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
+    private static bool TryGetTypeArgumentSyntax(
+        this INamespaceOrTypeSymbol symbol,
+        bool fullyQualified,
+        [NotNullWhen(true)] out TypeArgumentListSyntax? syntax)
+    {
+        bool isNullableValueType = symbol is INamedTypeSymbol
+        {
+            ConstructedFrom.SpecialType: SpecialType.System_Nullable_T,
+        };
+
+        if (symbol is INamedTypeSymbol { TypeArguments: { Length: not 0 } typeArguments }
+            && isNullableValueType is false)
+        {
+            syntax = TypeArgumentList(SeparatedList(typeArguments.Select(x => x.ToNameSyntax(fullyQualified))));
+            return true;
+        }
+
+        syntax = null;
+        return false;
+    }
+
     public static string GetFullyQualifiedName(this INamespaceOrTypeSymbol symbol)
         => symbol.ToDisplayString(FullyQualifiedSymbolFormat);
 
     public static string GetShortName(this INamespaceOrTypeSymbol symbol)
         => symbol.ToDisplayString(ShortSymbolFormat);
 
-    public static IEnumerable<IdentifierNameSyntax> ToTypeArgumentSyntax(this IEnumerable<ITypeSymbol> symbols)
-        => symbols.Select(ToTypeArgumentSyntax);
-
-    public static IdentifierNameSyntax ToTypeArgumentSyntax(this ITypeSymbol symbol)
-        => IdentifierName(symbol.GetFullyQualifiedName());
-
     public static TypeSyntax ToNameSyntax(this INamespaceOrTypeSymbol symbol, bool fullyQualified = true)
     {
         string name = fullyQualified ? symbol.GetFullyQualifiedName() : symbol.GetShortName();
-        return IdentifierName(name);
+
+        TypeSyntax type = TryGetTypeArgumentSyntax(symbol, fullyQualified, out TypeArgumentListSyntax? typeArguments)
+            ? GenericName(Identifier(name), typeArguments)
+            : IdentifierName(name);
+        
+        bool shouldAnnotateReferenceType = symbol is INamedTypeSymbol
+        {
+            IsReferenceType: true,
+            NullableAnnotation: NullableAnnotation.Annotated,
+        };
+
+        if (shouldAnnotateReferenceType)
+        {
+            type = NullableType(type);
+        }
+
+        return type;
     }
 
     public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this INamedTypeSymbol symbol)
