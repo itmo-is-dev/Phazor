@@ -7,6 +7,7 @@ namespace Phazor.Reactive.Sample;
 public interface IMyEntity : IReactiveEntity<long>
 {
     IObservable<int> Value { get; }
+    IObservable<int?> NullableValue { get; }
     IObservable<IEnumerable<int>> Collection { get; }
     IObservable<IEnumerable<IOtherEntity>> OtherEntities { get; }
 }

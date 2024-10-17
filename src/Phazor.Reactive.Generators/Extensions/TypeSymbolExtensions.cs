@@ -6,11 +6,21 @@ namespace Phazor.Reactive.Generators.Extensions;
 
 public static class TypeSymbolExtensions
 {
-    private static readonly SymbolDisplayFormat SymbolFormat = SymbolDisplayFormat.FullyQualifiedFormat
-        .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted);
+    private static SymbolDisplayFormat ConfigureDisplayFormat(SymbolDisplayFormat format) => format
+        .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
+        .WithGenericsOptions(SymbolDisplayGenericsOptions.IncludeTypeParameters);
+
+    private static readonly SymbolDisplayFormat FullyQualifiedSymbolFormat =
+        ConfigureDisplayFormat(SymbolDisplayFormat.FullyQualifiedFormat);
+
+    private static readonly SymbolDisplayFormat ShortSymbolFormat =
+        ConfigureDisplayFormat(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
     public static string GetFullyQualifiedName(this INamespaceOrTypeSymbol symbol)
-        => symbol.ToDisplayString(SymbolFormat);
+        => symbol.ToDisplayString(FullyQualifiedSymbolFormat);
+
+    public static string GetShortName(this INamespaceOrTypeSymbol symbol)
+        => symbol.ToDisplayString(ShortSymbolFormat);
 
     public static IEnumerable<IdentifierNameSyntax> ToTypeArgumentSyntax(this IEnumerable<ITypeSymbol> symbols)
         => symbols.Select(ToTypeArgumentSyntax);
@@ -20,40 +30,8 @@ public static class TypeSymbolExtensions
 
     public static TypeSyntax ToNameSyntax(this INamespaceOrTypeSymbol symbol, bool fullyQualified = true)
     {
-        IReadOnlyCollection<IdentifierNameSyntax> typeParameters = symbol switch
-        {
-            INamedTypeSymbol namedTypeSymbol => namedTypeSymbol.TypeArguments.ToTypeArgumentSyntax().ToArray(),
-            _ => [],
-        };
-
-        string name = fullyQualified ? symbol.GetFullyQualifiedName() : symbol.Name;
-
-        TypeSyntax type = typeParameters.Count is 0
-            ? IdentifierName(name)
-            : GenericName(Identifier(name), TypeArgumentList(SeparatedList<TypeSyntax>(typeParameters)));
-
-        if (symbol is not INamedTypeSymbol namedSymbol)
-            return type;
-
-        bool shouldAnnotateReferenceType = namedSymbol is
-        {
-            IsReferenceType: true,
-            NullableAnnotation: NullableAnnotation.Annotated,
-        };
-
-        bool shouldAnnotateValueType = namedSymbol is
-        {
-            IsValueType: true,
-            ConstructedFrom.SpecialType: not SpecialType.System_Nullable_T,
-            NullableAnnotation: NullableAnnotation.Annotated,
-        };
-
-        if (shouldAnnotateReferenceType || shouldAnnotateValueType)
-        {
-            type = NullableType(type);
-        }
-
-        return type;
+        string name = fullyQualified ? symbol.GetFullyQualifiedName() : symbol.GetShortName();
+        return IdentifierName(name);
     }
 
     public static IEnumerable<INamedTypeSymbol> GetBaseTypes(this INamedTypeSymbol symbol)
