@@ -1,0 +1,75 @@
+@using Microsoft.JSInterop
+@using Phazor.Components.Extensions
+@using Phazor.Components.Tools
+@namespace Phazor.Components
+@inject IJSRuntime Js
+
+<div id="@_id" style="@_styleFactory.Value" class="@Class">
+    <CascadingValue Value="_controller">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+
+    private readonly CssStyleFactory _styleFactory;
+    private readonly Guid _id = Guid.NewGuid();
+
+    private PhazorGridController _controller = new(PhazorGridDimension.Rows);
+
+    public PhazorGrid()
+    {
+        _styleFactory = new CssStyleFactory(BuildStyle);
+    }
+
+    [Parameter]
+    public PhazorGridDimension Dimension { get; set; } = PhazorGridDimension.Rows;
+
+    [Parameter]
+    public string? Columns { get; set; }
+
+    [Parameter]
+    public string? Rows { get; set; }
+
+    [Parameter]
+    public string? Gap { get; set; } = "0";
+
+    [Parameter]
+    public string? Style { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetUpdatedValue(nameof(Dimension), Dimension, out PhazorGridDimension? dimension))
+        {
+            _controller = new PhazorGridController(dimension);
+        }
+
+        if (parameters.TryGetUpdatedValue(nameof(Columns), Columns, out _)
+            || parameters.TryGetUpdatedValue(nameof(Rows), Rows, out _)
+            || parameters.TryGetUpdatedValue(nameof(Gap), Gap, out _)
+            || parameters.TryGetUpdatedValue(nameof(Style), Style, out _))
+        {
+            _styleFactory.Invalidate();
+        }
+
+        return base.SetParametersAsync(parameters);
+    }
+
+    private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
+    {
+        return builder
+            .Add("display", "grid")
+            .AddWhenValueNotNull("grid-template-columns", Columns)
+            .AddWhenValueNotNull("grid-template-rows", Rows)
+            .AddWhenValueNotNull("gap", Gap)
+            .Add("align-items", "center")
+            .AddWhenNotNull(Style);
+    }
+
+}

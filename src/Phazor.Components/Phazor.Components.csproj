@@ -3,6 +3,7 @@
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NoWarn>$(NoWarn);IDE0130</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -16,9 +17,9 @@
 
     <PropertyGroup>
         <PatchVersion>0</PatchVersion>
-        <Version>1.1.$(PatchVersion)</Version>
+        <Version>1.2.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added PhazorHStack and PhazorVStack
+            Added PhazorGrid
         </PackageReleaseNotes>
     </PropertyGroup>
 

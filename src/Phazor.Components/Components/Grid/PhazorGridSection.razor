@@ -1,0 +1,31 @@
+@using Phazor.Components.Extensions
+@namespace Phazor.Components
+
+@if (_position is not null)
+{
+    <CascadingValue Value="_position">
+        @ChildContent?.Invoke(_position.MajorDimensionIndex)
+    </CascadingValue>
+}
+
+@code {
+
+    private PhazorGridSectionController? _position;
+
+    [Parameter]
+    public RenderFragment<int>? ChildContent { get; set; }
+
+    [CascadingParameter]
+    protected PhazorGridController? PositionProvider { get; set; }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetUpdatedValue(nameof(PositionProvider), PositionProvider, out PhazorGridController? provider))
+        {
+            _position = provider.NextSection();
+        }
+
+        return base.SetParametersAsync(parameters);
+    }
+
+}

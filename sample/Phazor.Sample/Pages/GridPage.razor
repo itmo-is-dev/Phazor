@@ -1,0 +1,55 @@
+@page "/Grid"
+@using Phazor.Sample.Tools
+@attribute [PhazorSample("PhazorGrid")]
+
+<div>
+
+    <button @onclick="@Toggle">toggle dimensions</button>
+
+    <div>
+        dimension @(_dimension)
+    </div>
+
+    <PhazorGrid Dimension="_dimension">
+
+        <PhazorGridSection Context="x">
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+        </PhazorGridSection>
+
+        <PhazorGridItem MajorIndex="3" Style="background: red; transition: ease-out 0.5s">
+            x@(context.Row).@(context.Column)
+        </PhazorGridItem>
+
+        <PhazorGridSection Context="x">
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+        </PhazorGridSection>
+
+    </PhazorGrid>
+
+</div>
+
+@code {
+
+    private PhazorGridDimension _dimension = PhazorGridDimension.Rows;
+
+    public void Toggle()
+    {
+        _dimension = _dimension.Equals(PhazorGridDimension.Rows)
+            ? PhazorGridDimension.Columns
+            : PhazorGridDimension.Rows;
+    }
+
+}

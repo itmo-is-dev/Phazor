@@ -60,6 +60,12 @@ public class CssStyleBuilder
         return director.Direct(this);
     }
 
+    public CssStyleBuilder Clear()
+    {
+        _builder.Clear();
+        return this;
+    }
+
     public string Build()
     {
         if (_builder[^1] is ' ')
