@@ -14,8 +14,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.create-cache-keys.outputs.cache-key }}
+    environment: nuget.org
     
     steps:
       - uses: actions/checkout@v2
@@ -30,35 +29,18 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Create cache keys
-        id: create-cache-keys
-        run: |
-          echo cache-key=${{ runner.os }}-${{ hashFiles('src/**') }}-packages >> "$GITHUB_OUTPUT"
-
-      - name: cache packages
-        id: cache-packages
-        uses: actions/cache@v3
-        with:
-          path: .packages
-          key: ${{ steps.create-cache-keys.outputs.cache-key }}
-          restore-keys: ${{ steps.create-cache-keys.outputs.cache-key }}
-
       - name: restore .NET
-        if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
         run: dotnet restore Phazor.sln
-        
+
       - name: restore Node
-        if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
         run: |
           cd src/Phazor.Components/javascript
           yarn install
 
       - name: build
-        if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
         run: dotnet build Phazor.sln -c Release --no-restore /p:PatchVersion=${{ github.run_number }}
 
       - name: move packages
-        if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
         run: |
           rm -rf .packages
           mkdir .packages
@@ -66,22 +48,7 @@ jobs:
           mv src/Phazor.Extensions/bin/Release/*.nupkg .packages/
           mv src/Phazor.Reactive/bin/Release/*.nupkg .packages/
           mv src/Phazor.Reactive.Abstractions/bin/Release/*.nupkg .packages/
-          mv src/Phazor.Reactive.Generators/bin/Release/*.nupkg .packages/
-  
-  
-  publish:
-    name: publish
-    runs-on: ubuntu-latest
-    needs: build
-    environment: nuget.org
-    
-    steps:
-      - name: load packages
-        uses: actions/cache@v3
-        with:
-          fail-on-cache-miss: true
-          path: .packages
-          key: ${{ needs.build.outputs.cache-key }}
+          mv src/Phazor.Reactive.Generators/bin/Release/*.nupkg .packages/  
 
       - name: publish to GitHub nuget repository
         run: |
