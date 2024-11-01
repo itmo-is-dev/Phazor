@@ -17,23 +17,32 @@
 
     <PropertyGroup>
         <PatchVersion>0</PatchVersion>
-        <Version>1.2.$(PatchVersion)</Version>
+        <Version>1.3.$(PatchVersion)</Version>
         <PackageReleaseNotes>
             Added PhazorGrid
         </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
-        <SupportedPlatform Include="browser" />
+        <SupportedPlatform Include="browser"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web"/>
-        <PackageReference Include="System.Reactive" />
+        <PackageReference Include="System.Reactive"/>
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="cd javascript &amp;&amp; yarn run build"/>
+        <Exec Command="cp javascript/dist/*.js wwwroot"/>
+    </Target>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" />
+      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

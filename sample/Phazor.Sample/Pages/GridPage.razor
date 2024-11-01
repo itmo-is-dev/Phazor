@@ -5,6 +5,7 @@
 <div>
 
     <button @onclick="@Toggle">toggle dimensions</button>
+    <button @onclick="@Move">move element</button>
 
     <div>
         dimension @(_dimension)
@@ -19,11 +20,12 @@
             <PhazorGridItem>
                 @(context.Row).@(context.Column)
             </PhazorGridItem>
+            <PhazorGridItem>
+                @(context.Row).@(context.Column)
+            </PhazorGridItem>
+            <PhazorGridItem MinorIndex="@(_index + 1)" Style="background: red; height: 100%; width: 100%;z-index: -1">
+            </PhazorGridItem>
         </PhazorGridSection>
-
-        <PhazorGridItem MajorIndex="3" Style="background: red; transition: ease-out 0.5s">
-            x@(context.Row).@(context.Column)
-        </PhazorGridItem>
 
         <PhazorGridSection Context="x">
             <PhazorGridItem>
@@ -44,12 +46,19 @@
 @code {
 
     private PhazorGridDimension _dimension = PhazorGridDimension.Rows;
+    private int _index;
 
     public void Toggle()
     {
         _dimension = _dimension.Equals(PhazorGridDimension.Rows)
             ? PhazorGridDimension.Columns
             : PhazorGridDimension.Rows;
+    }
+
+    public void Move()
+    {
+        _index = (_index + 1) % 3;
+        StateHasChanged();
     }
 
 }

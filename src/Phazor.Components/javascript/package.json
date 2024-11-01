@@ -1,0 +1,14 @@
+{
+  "name": "javascript",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "animate-css-grid": "^1.5.1"
+  }
+}

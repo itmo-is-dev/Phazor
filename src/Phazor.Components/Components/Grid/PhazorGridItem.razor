@@ -4,13 +4,14 @@
 @namespace Phazor.Components
 @inject ILogger<PhazorGridItem> Logger
 
-<div style="@_styleFactory.Value" class="@Class">
+<div style="@_styleFactory.Value" class="@($"phazor-grid-item-{_version}")">
     @ChildContent?.Invoke(_position)
 </div>
 
 @code {
 
     private readonly CssStyleFactory _styleFactory;
+    private int _version = 0;
     private PhazorGridPosition _position;
 
     public PhazorGridItem()
@@ -56,9 +57,19 @@
             SectionController,
             out _);
 
+        bool majorIndexChanged = parameters.TryGetUpdatedValue(
+            nameof(MajorIndex),
+            MajorIndex,
+            out _);
+
+        bool minorIndexChanged = parameters.TryGetUpdatedValue(
+            nameof(MinorIndex),
+            MinorIndex,
+            out _);
+
         await base.SetParametersAsync(parameters);
 
-        if (gridControllerChanged is false && sectionControllerChanged is false)
+        if ((gridControllerChanged || sectionControllerChanged || majorIndexChanged || minorIndexChanged) is false)
             return;
 
         if (MajorIndex is not null && MinorIndex is not null && GridController is not null)
@@ -96,6 +107,7 @@
 
     private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
     {
+        _version++;
         return builder
             .Add("grid-row", _position.Row.ToString())
             .Add("grid-column", _position.Column.ToString())

@@ -76,12 +76,12 @@
     {
         if (firstRender)
         {
-            await Js.InvokeVoidAsync("subscribeOnScrollFinished", _contentId, _reference);
+            await Js.InvokeVoidAsync("Phazor.subscribeOnScrollFinished", _contentId, _reference);
         }
 
         if (_isLoading is false 
             && (_state is null || Controller?.ShouldLoadNextPage(_state) is true)
-            && await Js.InvokeAsync<bool>("isContentFillingParent", _contentId) is false)
+            && await Js.InvokeAsync<bool>("Phazor.isContentFillingParent", _contentId) is false)
         {
             OnScrollFinished();
         }

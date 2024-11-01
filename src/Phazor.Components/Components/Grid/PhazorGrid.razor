@@ -43,6 +43,14 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("Phazor.wrapGrid", _id.ToString());
+        }
+    }
+
     public override Task SetParametersAsync(ParameterView parameters)
     {
         if (parameters.TryGetUpdatedValue(nameof(Dimension), Dimension, out PhazorGridDimension? dimension))
