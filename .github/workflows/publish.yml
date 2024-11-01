@@ -43,9 +43,15 @@ jobs:
           key: ${{ steps.create-cache-keys.outputs.cache-key }}
           restore-keys: ${{ steps.create-cache-keys.outputs.cache-key }}
 
-      - name: restore
+      - name: restore .NET
         if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
         run: dotnet restore Phazor.sln
+        
+      - name: restore Node
+        if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
+        run: |
+          cd src/Phazor.Components/javascript
+          yarn install
 
       - name: build
         if: ${{ steps.cache-packages.outputs.cache-hit != 'true' }}
