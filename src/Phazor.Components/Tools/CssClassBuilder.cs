@@ -4,12 +4,7 @@ namespace Phazor.Components.Tools;
 
 public class CssClassBuilder
 {
-    private readonly StringBuilder _builder;
-
-    public CssClassBuilder()
-    {
-        _builder = new StringBuilder();
-    }
+    private readonly StringBuilder _builder = new();
 
     public CssClassBuilder Add(string value)
     {
@@ -32,6 +27,12 @@ public class CssClassBuilder
     public CssClassBuilder Use(ICssClassDirector director)
     {
         return director.Direct(this);
+    }
+
+    public CssClassBuilder Clear()
+    {
+        _builder.Clear();
+        return this;
     }
 
     public string Build()

@@ -4,12 +4,7 @@ namespace Phazor.Components.Tools;
 
 public class CssStyleBuilder
 {
-    private readonly StringBuilder _builder;
-
-    public CssStyleBuilder()
-    {
-        _builder = new StringBuilder();
-    }
+    private readonly StringBuilder _builder = new();
 
     public CssStyleBuilder Add(string key, string value)
     {
