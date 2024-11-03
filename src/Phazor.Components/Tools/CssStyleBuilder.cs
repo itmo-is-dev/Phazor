@@ -63,6 +63,9 @@ public class CssStyleBuilder
 
     public string Build()
     {
+        if (_builder.Length is 0)
+            return string.Empty;
+
         if (_builder[^1] is ' ')
             _builder.Remove(_builder.Length - 1, 1);
 
