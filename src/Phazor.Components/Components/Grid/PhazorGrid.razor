@@ -41,11 +41,14 @@
     public string? Class { get; set; }
 
     [Parameter]
+    public bool DisableAnimation { get; set; }
+
+    [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && DisableAnimation is false)
         {
             await Js.InvokeVoidAsync("Phazor.wrapGrid", _id.ToString());
         }
