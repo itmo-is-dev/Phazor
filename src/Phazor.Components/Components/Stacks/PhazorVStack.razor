@@ -1,0 +1,56 @@
+@namespace Phazor.Components
+@using Phazor.Components.Tools
+@using Phazor.Components.Models
+@inherits PhazorComponent
+
+<div style="@ComputedStyle" class="@ComputedClass">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Reversed { get; set; }
+
+    [Parameter]
+    public VerticalDistribution Vertical { get; set; } = VerticalDistribution.Center;
+
+    [Parameter]
+    public HorizontalAlignment Horizontal { get; set; } = HorizontalAlignment.Center;
+
+    [Parameter]
+    public PhazorStackVariant Variant { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void ConfigureClasses(CssClassBuilder builder)
+    {
+        builder
+            .Add("phazor-stack-vertical")
+            .AddWhen(Reversed, "phazor-stack-reversed")
+            .AddWhenNotNull(Vertical switch
+            {
+                VerticalDistribution.Top => "phazor-stack-justify-start",
+                VerticalDistribution.Center => "phazor-stack-justify-center",
+                VerticalDistribution.Bottom => "phazor-stack-justify-end",
+                VerticalDistribution.Around => "phazor-stack-justify-around",
+                VerticalDistribution.Between => "phazor-stack-justify-between",
+                _ => null,
+            })
+            .AddWhenNotNull(Horizontal switch
+            {
+                HorizontalAlignment.Left => "phazor-stack-align-start",
+                HorizontalAlignment.Center => "phazor-stack-align-center",
+                HorizontalAlignment.Right => "phazor-stack-align-end",
+                _ => null,
+            })
+            .AddWhenNotNull(Variant switch
+            {
+                PhazorStackVariant.Default => "phazor-stack-default",
+                PhazorStackVariant.Compact => "phazor-stack-compact",
+                _ => null,
+            });
+    }
+
+}

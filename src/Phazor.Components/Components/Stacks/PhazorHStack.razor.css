@@ -1,0 +1,48 @@
+.phazor-stack-horizontal {
+    display: flex;
+    flex-direction: row;
+
+    &.phazor-stack-default {
+    }
+
+    &.phazor-stack-compact {
+        height: fit-content;
+        width: fit-content;
+    }
+
+    &.phazor-stack-reversed {
+        flex-direction: row-reverse;
+    }
+
+    &.phazor-stack-justify-start {
+        justify-content: start;
+    }
+
+    &.phazor-stack-justify-center {
+        justify-content: center;
+    }
+
+    &.phazor-stack-justify-end {
+        justify-content: end;
+    }
+
+    &.phazor-stack-justify-around {
+        justify-content: space-around;
+    }
+
+    &.phazor-stack-justify-between {
+        justify-content: space-between;
+    }
+
+    &.phazor-stack-align-start {
+        align-items: start;
+    }
+
+    &.phazor-stack-align-center {
+        align-items: center;
+    }
+
+    &.phazor-stack-align-end {
+        align-items: end;
+    }
+}

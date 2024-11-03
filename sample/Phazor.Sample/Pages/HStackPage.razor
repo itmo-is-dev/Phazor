@@ -3,12 +3,16 @@
 @using Phazor.Components.Models
 @attribute [PhazorSample("PhazorHStack")]
 
-<PhazorHStack Horizontal="HorizontalDistribution.Around">
+<PhazorHStack Horizontal="HorizontalDistribution.Around" Variant="@(IsCompact ? PhazorStackVariant.Compact : PhazorStackVariant.Default)">
     <div>1</div>
     <div>1</div>
     <div>1</div>
 </PhazorHStack>
 
 @code {
-    
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "compact")]
+    public bool IsCompact { get; set; }
+
 }

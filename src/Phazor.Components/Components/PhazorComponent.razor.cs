@@ -15,13 +15,17 @@ public abstract class PhazorComponent : ComponentBase, ICssClassDirector, ICssSt
     public string? Class { get; set; }
 
     [Parameter]
-    public string? Width { get; set; } = "100%";
+    public string? Width { get; set; }
 
-    public string? Height { get; set; } = "100%";
+    [Parameter]
+    public string? Height { get; set; }
 
     public CssClassBuilder Direct(CssClassBuilder builder)
     {
-        builder.AddWhenNotNull(Class);
+        builder
+            .AddWhenNotNull(Class)
+            .Add("phazor-component");
+
         ConfigureClasses(builder);
 
         return builder;
