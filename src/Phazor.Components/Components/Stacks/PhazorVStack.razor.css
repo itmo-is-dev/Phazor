@@ -7,7 +7,6 @@
 
     &.phazor-stack-compact {
         height: fit-content;
-        width: fit-content;
     }
 
     &.phazor-stack-reversed {
