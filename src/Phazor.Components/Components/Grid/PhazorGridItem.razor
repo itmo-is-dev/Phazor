@@ -4,19 +4,22 @@
 @namespace Phazor.Components
 @inject ILogger<PhazorGridItem> Logger
 
-<div style="@_styleFactory.Value" class="@($"phazor-grid-item-{_version}")">
+<div style="@_styleFactory.Value" class="@_classFactory.Value">
     @ChildContent?.Invoke(_position)
 </div>
 
 @code {
 
     private readonly CssStyleFactory _styleFactory;
+    private readonly CssClassFactory _classFactory;
+
     private int _version = 0;
     private PhazorGridPosition _position;
 
     public PhazorGridItem()
     {
         _styleFactory = new CssStyleFactory(BuildStyle);
+        _classFactory = new CssClassFactory(BuildClass);
     }
 
     [Parameter]
@@ -42,9 +45,10 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        if (parameters.TryGetUpdatedValue(nameof(Style), Style, out _))
+        if (parameters.TryGetUpdatedValue(nameof(Style), Style, out _)
+            || parameters.TryGetUpdatedValue(nameof(Class), Class, out _))
         {
-            _styleFactory.Invalidate();
+            Invalidate();
         }
 
         bool gridControllerChanged = parameters.TryGetUpdatedValue(
@@ -75,29 +79,29 @@
         if (MajorIndex is not null && MinorIndex is not null && GridController is not null)
         {
             _position = GridController.MakePosition(MajorIndex.Value, MinorIndex.Value);
-            _styleFactory.Invalidate();
+            Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is not null && SectionController is not null)
         {
             _position = SectionController.MakePosition(MinorIndex.Value);
-            _styleFactory.Invalidate();
+            Invalidate();
         }
         else if (MajorIndex is not null && MinorIndex is null && GridController is not null)
         {
             PhazorGridSectionController controller = GridController.SectionAt(MajorIndex.Value);
             _position = controller.NextItem().Value;
-            _styleFactory.Invalidate();
+            Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && SectionController is not null)
         {
             _position = SectionController.NextItem().Value;
-            _styleFactory.Invalidate();
+            Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && GridController is not null)
         {
             PhazorGridSectionController controller = GridController.NextSection();
             _position = controller.NextItem().Value;
-            _styleFactory.Invalidate();
+            Invalidate();
         }
         else
         {
@@ -105,13 +109,26 @@
         }
     }
 
-    private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
+    private void Invalidate()
     {
         _version++;
+        _styleFactory.Invalidate();
+        _classFactory.Invalidate();
+    }
+
+    private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
+    {
         return builder
             .Add("grid-row", _position.Row.ToString())
             .Add("grid-column", _position.Column.ToString())
             .AddWhenNotNull(Style);
+    }
+
+    private CssClassBuilder BuildClass(CssClassBuilder builder)
+    {
+        return builder
+            .AddWhenNotNull(Class)
+            .Add($"phazor-grid-item-{_version}");
     }
 
 }
