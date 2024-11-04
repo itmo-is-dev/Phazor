@@ -3,15 +3,16 @@ namespace Phazor.Components;
 public class PhazorGridItemPosition
 {
     private readonly PhazorGridDimension _dimension;
-    private readonly string _majorDimensionIndex;
-    private readonly string _minorDimensionIndex;
+    private readonly int _majorDimensionIndex;
+    private readonly int _minorDimensionIndex;
 
-    public PhazorGridItemPosition(PhazorGridDimension dimension, string majorDimensionIndex, string minorDimensionIndex)
+    public PhazorGridItemPosition(PhazorGridDimension dimension, int majorDimensionIndex, int minorDimensionIndex)
     {
         _dimension = dimension;
         _majorDimensionIndex = majorDimensionIndex;
         _minorDimensionIndex = minorDimensionIndex;
     }
 
-    public PhazorGridPosition Value => _dimension.MakePosition(_majorDimensionIndex, _minorDimensionIndex);
+    public PhazorGridPosition MakePosition(int? majorSpan, int? minorSpan)
+        => _dimension.MakePosition(_majorDimensionIndex, _minorDimensionIndex, majorSpan, minorSpan);
 }

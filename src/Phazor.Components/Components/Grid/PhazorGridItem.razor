@@ -25,10 +25,16 @@
     }
 
     [Parameter]
-    public string? MajorIndex { get; set; }
+    public int? MajorIndex { get; set; }
 
     [Parameter]
-    public string? MinorIndex { get; set; }
+    public int? MinorIndex { get; set; }
+
+    [Parameter]
+    public int? MajorSpan { get; set; }
+
+    [Parameter]
+    public int? MinorSpan { get; set; }
 
     [Parameter]
     public string? Style { get; set; }
@@ -80,32 +86,29 @@
 
         if (MajorIndex is not null && MinorIndex is not null && GridController is not null)
         {
-            _position = GridController.MakePosition(MajorIndex, MinorIndex);
+            _position = GridController.MakePosition(MajorIndex.Value, MinorIndex.Value, MajorSpan, MinorSpan);
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is not null && SectionController is not null)
         {
-            _position = SectionController.MakePosition(MinorIndex);
+            _position = SectionController.MakePosition(MinorIndex.Value, MajorSpan, MinorSpan);
             Invalidate();
         }
-        else if (MajorIndex is not null
-                 && MinorIndex is null
-                 && GridController is not null
-                 && int.TryParse(MajorIndex, out int majorIndex))
+        else if (MajorIndex is not null && MinorIndex is null && GridController is not null)
         {
-            PhazorGridSectionController controller = GridController.SectionAt(majorIndex);
-            _position = controller.NextItem().Value;
+            PhazorGridSectionController controller = GridController.SectionAt(MajorIndex.Value);
+            _position = controller.NextItem().MakePosition(MajorSpan, MinorSpan);
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && SectionController is not null)
         {
-            _position = SectionController.NextItem().Value;
+            _position = SectionController.NextItem().MakePosition(MajorSpan, MinorSpan);
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && GridController is not null)
         {
             PhazorGridSectionController controller = GridController.NextSection();
-            _position = controller.NextItem().Value;
+            _position = controller.NextItem().MakePosition(MajorSpan, MinorSpan);
             Invalidate();
         }
         else
@@ -124,8 +127,8 @@
     private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
     {
         return builder
-            .Add("grid-row", _position.Row)
-            .Add("grid-column", _position.Column)
+            .Add("grid-row", $"{_position.Row} / span {_position.RowSpan}")
+            .Add("grid-column", $"{_position.Column} / span {_position.ColumnSpan}")
             .AddWhenNotNull(Style);
     }
 

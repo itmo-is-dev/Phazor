@@ -19,7 +19,7 @@
         <PatchVersion>0</PatchVersion>
         <Version>1.3.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            PhazorGrid string indices
+            Fixed grid spans
         </PackageReleaseNotes>
     </PropertyGroup>
 

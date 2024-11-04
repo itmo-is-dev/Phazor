@@ -8,24 +8,17 @@ public class PhazorGridSectionController
     public PhazorGridSectionController(PhazorGridDimension dimension, int majorDimensionIndex)
     {
         MajorDimensionIndex = majorDimensionIndex;
-        MajorDimensionString = majorDimensionIndex.ToString();
-
         _dimension = dimension;
         _currentMinorIndex = 1;
     }
 
     public int MajorDimensionIndex { get; }
 
-    public string MajorDimensionString { get; }
-
     public PhazorGridItemPosition NextItem()
     {
-        return new PhazorGridItemPosition(
-            _dimension,
-            MajorDimensionString,
-            minorDimensionIndex: _currentMinorIndex++.ToString());
+        return new PhazorGridItemPosition(_dimension, MajorDimensionIndex, _currentMinorIndex++);
     }
 
-    public PhazorGridPosition MakePosition(string minorDimension)
-        => _dimension.MakePosition(MajorDimensionString, minorDimension);
+    public PhazorGridPosition MakePosition(int minorDimension, int? majorSpan, int? minorSpan)
+        => _dimension.MakePosition(MajorDimensionIndex, minorDimension, majorSpan, minorSpan);
 }
