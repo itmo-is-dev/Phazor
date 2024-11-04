@@ -19,7 +19,7 @@
         <PatchVersion>0</PatchVersion>
         <Version>1.3.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added PhazorGrid.DisableAnimation
+            PhazorGrid string indices
         </PackageReleaseNotes>
     </PropertyGroup>
 

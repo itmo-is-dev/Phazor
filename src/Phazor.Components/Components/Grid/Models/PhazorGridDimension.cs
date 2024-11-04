@@ -3,9 +3,9 @@ namespace Phazor.Components;
 public sealed class PhazorGridDimension
 {
     private readonly string _stringRepresentation;
-    private readonly Func<int, int, PhazorGridPosition> _func;
+    private readonly Func<string, string, PhazorGridPosition> _func;
 
-    private PhazorGridDimension(string stringRepresentation, Func<int, int, PhazorGridPosition> func)
+    private PhazorGridDimension(string stringRepresentation, Func<string, string, PhazorGridPosition> func)
     {
         _stringRepresentation = stringRepresentation;
         _func = func;
@@ -19,7 +19,7 @@ public sealed class PhazorGridDimension
         "columns",
         (majorIndex, minorIndex) => new PhazorGridPosition(Row: minorIndex, Column: majorIndex));
 
-    public PhazorGridPosition MakePosition(int majorIndex, int minorIndex)
+    public PhazorGridPosition MakePosition(string majorIndex, string minorIndex)
         => _func.Invoke(majorIndex, minorIndex);
 
     public override string ToString() => _stringRepresentation;

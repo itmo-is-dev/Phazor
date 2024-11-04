@@ -1,0 +1,16 @@
+@namespace Phazor.Components
+
+@if (Position is not null)
+{
+    @ChildContent?.Invoke(Position.Value)
+}
+
+@code {
+    
+    [Parameter]
+    public RenderFragment<PhazorGridPosition>? ChildContent { get; set; }
+    
+    [CascadingParameter]
+    public PhazorGridPosition? Position { get; set; }
+    
+}

@@ -1,0 +1,14 @@
+@namespace Phazor.Components
+
+@if (Controller is not null)
+{
+    @ChildContent?.Invoke(Controller.MajorDimensionIndex)
+}
+
+@code {
+    [Parameter]
+    public RenderFragment<int>? ChildContent { get; set; }
+    
+    [CascadingParameter]
+    protected PhazorGridSectionController? Controller { get; set; }
+}

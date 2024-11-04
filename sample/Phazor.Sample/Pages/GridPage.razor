@@ -13,29 +13,41 @@
 
     <PhazorGrid Dimension="_dimension">
 
-        <PhazorGridSection Context="x">
+        <PhazorGridSection>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
-            <PhazorGridItem MinorIndex="@(_index + 1)" Style="background: red; height: 100%; width: 100%;z-index: -1">
+            <PhazorGridItem MinorIndex="@($"{_index + 1} / span 2")" Style="background: red; height: 100%; width: 100%;z-index: -1">
             </PhazorGridItem>
         </PhazorGridSection>
 
-        <PhazorGridSection Context="x">
+        <PhazorGridSection>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
             <PhazorGridItem>
-                @(context.Row).@(context.Column)
+                <PhazorGridItemContext>
+                    @(context.Row).@(context.Column)
+                </PhazorGridItemContext>
             </PhazorGridItem>
         </PhazorGridSection>
 

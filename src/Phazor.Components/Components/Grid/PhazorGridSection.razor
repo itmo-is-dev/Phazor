@@ -4,7 +4,7 @@
 @if (_position is not null)
 {
     <CascadingValue Value="_position">
-        @ChildContent?.Invoke(_position.MajorDimensionIndex)
+        @ChildContent
     </CascadingValue>
 }
 
@@ -13,7 +13,7 @@
     private PhazorGridSectionController? _position;
 
     [Parameter]
-    public RenderFragment<int>? ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [CascadingParameter]
     protected PhazorGridController? PositionProvider { get; set; }

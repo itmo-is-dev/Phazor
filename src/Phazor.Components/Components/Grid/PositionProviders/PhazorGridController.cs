@@ -25,6 +25,6 @@ public class PhazorGridController
             : _sections[majorIndex] = new PhazorGridSectionController(_dimension, majorIndex);
     }
 
-    public PhazorGridPosition MakePosition(int majorIndex, int minorIndex)
+    public PhazorGridPosition MakePosition(string majorIndex, string minorIndex)
         => _dimension.MakePosition(majorIndex, minorIndex);
 }

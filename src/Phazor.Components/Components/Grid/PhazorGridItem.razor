@@ -4,9 +4,11 @@
 @namespace Phazor.Components
 @inject ILogger<PhazorGridItem> Logger
 
-<div style="@_styleFactory.Value" class="@_classFactory.Value">
-    @ChildContent?.Invoke(_position)
-</div>
+<CascadingValue Value="_position">
+    <div style="@_styleFactory.Value" class="@_classFactory.Value">
+        @ChildContent
+    </div>
+</CascadingValue>
 
 @code {
 
@@ -23,10 +25,10 @@
     }
 
     [Parameter]
-    public int? MajorIndex { get; set; }
+    public string? MajorIndex { get; set; }
 
     [Parameter]
-    public int? MinorIndex { get; set; }
+    public string? MinorIndex { get; set; }
 
     [Parameter]
     public string? Style { get; set; }
@@ -35,7 +37,7 @@
     public string? Class { get; set; }
 
     [Parameter]
-    public RenderFragment<PhazorGridPosition>? ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [CascadingParameter]
     protected PhazorGridSectionController? SectionController { get; set; }
@@ -78,17 +80,20 @@
 
         if (MajorIndex is not null && MinorIndex is not null && GridController is not null)
         {
-            _position = GridController.MakePosition(MajorIndex.Value, MinorIndex.Value);
+            _position = GridController.MakePosition(MajorIndex, MinorIndex);
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is not null && SectionController is not null)
         {
-            _position = SectionController.MakePosition(MinorIndex.Value);
+            _position = SectionController.MakePosition(MinorIndex);
             Invalidate();
         }
-        else if (MajorIndex is not null && MinorIndex is null && GridController is not null)
+        else if (MajorIndex is not null
+                 && MinorIndex is null
+                 && GridController is not null
+                 && int.TryParse(MajorIndex, out int majorIndex))
         {
-            PhazorGridSectionController controller = GridController.SectionAt(MajorIndex.Value);
+            PhazorGridSectionController controller = GridController.SectionAt(majorIndex);
             _position = controller.NextItem().Value;
             Invalidate();
         }
@@ -119,8 +124,8 @@
     private CssStyleBuilder BuildStyle(CssStyleBuilder builder)
     {
         return builder
-            .Add("grid-row", _position.Row.ToString())
-            .Add("grid-column", _position.Column.ToString())
+            .Add("grid-row", _position.Row)
+            .Add("grid-column", _position.Column)
             .AddWhenNotNull(Style);
     }
 
