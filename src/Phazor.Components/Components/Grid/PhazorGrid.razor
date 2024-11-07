@@ -46,6 +46,12 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    public void ResetController()
+    {
+        _controller = new PhazorGridController(Dimension);
+        StateHasChanged();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && DisableAnimation is false)
