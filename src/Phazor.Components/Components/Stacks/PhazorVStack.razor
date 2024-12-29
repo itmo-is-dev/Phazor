@@ -27,6 +27,7 @@
     protected override void ConfigureClasses(CssClassBuilder builder)
     {
         builder
+            .Add("phazor-stack")
             .Add("phazor-stack-vertical")
             .AddWhen(Reversed, "phazor-stack-reversed")
             .AddWhenNotNull(Vertical switch

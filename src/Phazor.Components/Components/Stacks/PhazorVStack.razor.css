@@ -2,6 +2,11 @@
     display: flex;
     flex-direction: column;
 
+    .phazor-stack > & {
+        width: unset!important;
+        height: unset!important;
+    }
+
     &.phazor-stack-default {
     }
 

@@ -1,6 +1,11 @@
 .phazor-stack-horizontal {
     display: flex;
     flex-direction: row;
+    
+    .phazor-stack > & {
+        width: unset!important;
+        height: unset!important;
+    }
 
     &.phazor-stack-default {
     }
