@@ -49,4 +49,8 @@
     &.phazor-stack-align-end {
         align-items: end;
     }
+    
+    &.phazor-stack-align-stretch {
+        align-items: stretch;
+    }
 }
