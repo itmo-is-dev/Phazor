@@ -1,4 +1,5 @@
 @page "/Grid"
+@using System.Reactive.Subjects
 @using Phazor.Sample.Tools
 @attribute [PhazorSample("PhazorGrid")]
 
@@ -6,63 +7,61 @@
 
     <button @onclick="@Toggle">toggle dimensions</button>
     <button @onclick="@Move">move element</button>
+    <button @onclick="@ResetController">reset controller</button>
+    <button @onclick="@IncrementMajorCount">increment major count</button>
 
     <div>
         dimension @(_dimension)
     </div>
 
-    <PhazorGrid Dimension="_dimension">
+    <PhazorGrid @ref="_grid" Dimension="_dimension" Gap="10px" Style="background-color: teal">
+        <PhazorReactiveForEach Elements="_values" Context="_">
+            <PhazorGridSection>
+                <PhazorGridItem>
+                    <PhazorGridItemContext>
+                        @(context.Row).@(context.Column)
+                    </PhazorGridItemContext>
+                </PhazorGridItem>
+                <PhazorGridItem>
+                    <PhazorGridItemContext>
+                        @(context.Row).@(context.Column)
+                    </PhazorGridItemContext>
+                </PhazorGridItem>
+                <PhazorGridItem>
+                    <PhazorGridItemContext>
+                        @(context.Row).@(context.Column)
+                    </PhazorGridItemContext>
+                </PhazorGridItem>
 
-        <PhazorGridSection>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
 
-            <PhazorGridItem
-                MinorIndex="@(_index + 1)"
-                MinorSpan="2"
-                Style="background: red; height: 100%; width: 100%;z-index: -1"/>
+            </PhazorGridSection>
+        </PhazorReactiveForEach>
 
-        </PhazorGridSection>
-
-        <PhazorGridSection>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
-            <PhazorGridItem>
-                <PhazorGridItemContext>
-                    @(context.Row).@(context.Column)
-                </PhazorGridItemContext>
-            </PhazorGridItem>
-        </PhazorGridSection>
+        <PhazorGridItem
+            MajorIndex="1"
+            MinorIndex="@(_index + 1)"
+            MinorSpan="2"
+            Style="background: red; height: 100%; width: 100%;z-index: -1"/>
 
     </PhazorGrid>
 
 </div>
 
 @code {
+    private readonly Subject<IEnumerable<int>> _values = new();
+
+    private PhazorGrid? _grid;
 
     private PhazorGridDimension _dimension = PhazorGridDimension.Rows;
     private int _index;
+
+    private int _majorCount;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            IncrementMajorCount();
+    }
 
     public void Toggle()
     {
@@ -75,6 +74,17 @@
     {
         _index = (_index + 1) % 3;
         StateHasChanged();
+    }
+
+    private void IncrementMajorCount()
+    {
+        _majorCount++;
+        _values.OnNext(Enumerable.Range(0, _majorCount));
+    }
+
+    public void ResetController()
+    {
+        _grid?.ResetController();
     }
 
 }

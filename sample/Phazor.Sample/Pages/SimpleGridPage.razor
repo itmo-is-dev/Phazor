@@ -1,0 +1,35 @@
+@page "/SimpleGrid"
+@using Phazor.Sample.Tools
+@attribute [PhazorSample("Simple grid")]
+
+<PhazorGrid
+    Dimension="PhazorGridDimension.Rows"
+    Rows="minmax(0,auto) 1fr"
+    Columns="min-content 1fr"
+    Style="background-color: teal">
+
+    <PhazorGridSection>
+
+        <PhazorGridItem>
+            1
+        </PhazorGridItem>
+
+        <PhazorGridItem>
+
+        </PhazorGridItem>
+
+    </PhazorGridSection>
+
+    <PhazorGridSection>
+        <PhazorGridItem>
+            divider
+        </PhazorGridItem>
+    </PhazorGridSection>
+
+</PhazorGrid>
+
+
+
+@code {
+
+}

@@ -74,14 +74,31 @@
             MajorIndex,
             out _);
 
+        bool majorSpanChanged = parameters.TryGetUpdatedValue(
+            nameof(MajorSpan),
+            MajorSpan,
+            out _);
+
         bool minorIndexChanged = parameters.TryGetUpdatedValue(
             nameof(MinorIndex),
             MinorIndex,
             out _);
 
+        bool minorSpanChanged = parameters.TryGetUpdatedValue(
+            nameof(MinorSpan),
+            MinorSpan,
+            out _);
+
         await base.SetParametersAsync(parameters);
 
-        if ((gridControllerChanged || sectionControllerChanged || majorIndexChanged || minorIndexChanged) is false)
+        bool hasUpdates = gridControllerChanged
+                          || sectionControllerChanged
+                          || majorIndexChanged
+                          || majorSpanChanged
+                          || minorIndexChanged
+                          || minorSpanChanged;
+
+        if (hasUpdates is false)
             return;
 
         if (MajorIndex is not null && MinorIndex is not null && GridController is not null)
