@@ -114,18 +114,32 @@
         else if (MajorIndex is not null && MinorIndex is null && GridController is not null)
         {
             PhazorGridSectionController controller = GridController.SectionAt(MajorIndex.Value);
-            _position = controller.NextItem().MakePosition(MajorSpan, MinorSpan);
+            PhazorGridItemPosition itemPosition = controller.NextItem();
+
+            MinorIndex = itemPosition.MinorDimensionIndex;
+            _position = itemPosition.MakePosition(MajorSpan, MinorSpan);
+
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && SectionController is not null)
         {
-            _position = SectionController.NextItem().MakePosition(MajorSpan, MinorSpan);
+            PhazorGridItemPosition itemPosition = SectionController.NextItem();
+
+            MajorIndex = itemPosition.MajorDimensionIndex;
+            MinorIndex = itemPosition.MinorDimensionIndex;
+            _position = itemPosition.MakePosition(MajorSpan, MinorSpan);
+
             Invalidate();
         }
         else if (MajorIndex is null && MinorIndex is null && GridController is not null)
         {
             PhazorGridSectionController controller = GridController.NextSection();
-            _position = controller.NextItem().MakePosition(MajorSpan, MinorSpan);
+            PhazorGridItemPosition itemPosition = controller.NextItem();
+
+            MajorIndex = itemPosition.MajorDimensionIndex;
+            MinorIndex = itemPosition.MinorDimensionIndex;
+            _position = itemPosition.MakePosition(MajorSpan, MinorSpan);
+
             Invalidate();
         }
         else
