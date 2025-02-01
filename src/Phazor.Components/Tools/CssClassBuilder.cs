@@ -4,45 +4,44 @@ namespace Phazor.Components.Tools;
 
 public class CssClassBuilder
 {
-    private readonly StringBuilder _builder = new();
+    private readonly AdaptiveWeakReference<StringBuilder> _builder = new(static () => new StringBuilder());
 
     public CssClassBuilder Add(string value)
     {
-        _builder.Append(value);
-        _builder.Append(' ');
+        _builder.Value.Append(value);
+        _builder.Value.Append(' ');
 
         return this;
     }
 
     public CssClassBuilder AddWhen(bool condition, string value)
-    {
-        return condition ? Add(value) : this;
-    }
+        => condition ? Add(value) : this;
 
     public CssClassBuilder AddWhenNotNull(string? value)
-    {
-        return string.IsNullOrEmpty(value) ? this : Add(value);
-    }
+        => string.IsNullOrEmpty(value) ? this : Add(value);
 
     public CssClassBuilder Use(ICssClassDirector director)
+        => director.Direct(this);
+
+    public void Clear()
     {
-        return director.Direct(this);
+        _builder.Value.Clear();
+        _builder.Strengthen();
     }
 
-    public CssClassBuilder Clear()
-    {
-        _builder.Clear();
-        return this;
-    }
+    public void OnUnchanged()
+        => _builder.Weaken();
 
     public string Build()
     {
-        if (_builder.Length is 0)
+        StringBuilder builder = _builder.Value;
+
+        if (builder.Length is 0)
             return string.Empty;
 
-        if (_builder[^1] is ' ')
-            _builder.Remove(_builder.Length - 1, 1);
+        if (builder[^1] is ' ')
+            builder.Remove(builder.Length - 1, 1);
 
-        return _builder.ToString();
+        return builder.ToString();
     }
 }

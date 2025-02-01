@@ -12,10 +12,16 @@ dotnet_diagnostic.ide0002.severity = warning
 dotnet_diagnostic.sa0001.severity = none
 dotnet_diagnostic.ide0003.severity = warning
 dotnet_diagnostic.ide0009.severity = warning
+dotnet_diagnostic.IDE0220.severity = error
+
 dotnet_style_qualification_for_field = false:warning
 dotnet_style_qualification_for_property = false:warning
 dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_event = false:warning
+
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1502.severity = none
 
 dotnet_diagnostic.SA1010.severity = none
 
@@ -316,6 +322,15 @@ csharp_style_prefer_tuple_swap = false:suggestion
 dotnet_diagnostic.ide1005.severity = suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
+# IDE0290
+dotnet_diagnostic.ide0290.severity = none
+csharp_style_prefer_primary_constructors = false
+resharper_convert_to_primary_constructor_highlighting = none
+
+# IDE0305
+dotnet_diagnostic.ide0305.severity = none
+dotnet_style_prefer_collection_expression = false
+
 dotnet_diagnostic.ca1000.severity = none
 dotnet_diagnostic.ca1001.severity = warning
 dotnet_diagnostic.ca1002.severity = warning
@@ -446,6 +461,7 @@ dotnet_diagnostic.ca1854.severity = suggestion
 dotnet_diagnostic.ca2000.severity = suggestion
 # dotnet_diagnostic.CA2000.severity = warning
 dotnet_diagnostic.ca2002.severity = none
+dotnet_diagnostic.ca2007.severity = none
 dotnet_diagnostic.ca2008.severity = none
 dotnet_diagnostic.ca2009.severity = warning
 dotnet_diagnostic.ca2011.severity = warning
@@ -567,3 +583,22 @@ csharp_wrap_chained_method_calls = chop_if_long
 # ReSharper properties
 resharper_csharp_wrap_after_declaration_lpar = true
 resharper_csharp_wrap_parameters_style = chop_if_long
+
+dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1034.severity = none
+
+dotnet_diagnostic.SA1101.severity = none
+dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1309.severity = none
+dotnet_diagnostic.SA1601.severity = none
+dotnet_diagnostic.SA1201.severity = none
+dotnet_diagnostic.SA1127.severity = none
+dotnet_diagnostic.SA1128.severity = none
+dotnet_diagnostic.SA1611.severity = none
+dotnet_diagnostic.SA1604.severity = none
+dotnet_diagnostic.SA1629.severity = none
+dotnet_diagnostic.SA1602.severity = none
+dotnet_diagnostic.SA1615.severity = none
+
+resharper_braces_redundant = false

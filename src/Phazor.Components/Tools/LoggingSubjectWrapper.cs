@@ -3,7 +3,7 @@ using System.Reactive.Subjects;
 
 namespace Phazor.Components.Tools;
 
-public class LoggingSubjectWrapper<T> : SubjectBase<T>
+internal class LoggingSubjectWrapper<T> : SubjectBase<T>
 {
     private readonly ILogger _logger;
     private readonly SubjectBase<T> _subject;

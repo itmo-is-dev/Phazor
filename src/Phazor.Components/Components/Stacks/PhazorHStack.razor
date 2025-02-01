@@ -1,4 +1,5 @@
 @namespace Phazor.Components
+@using Phazor.Components.Extensions
 @using Phazor.Components.Tools
 @using Phazor.Components.Models
 @inherits PhazorComponent
@@ -23,6 +24,17 @@
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    protected override ValueTask<PhazorSetParametersResult> BeforeSetParametersAsync(ParameterView parameters)
+    {
+        bool classChanged =
+            parameters.TryGetUpdatedValue(nameof(Reversed), Reversed, out bool? _)
+            || parameters.TryGetUpdatedValue(nameof(Horizontal), Horizontal, out HorizontalDistribution? _)
+            || parameters.TryGetUpdatedValue(nameof(Vertical), Vertical, out VerticalAlignment? _)
+            || parameters.TryGetUpdatedValue(nameof(Variant), Variant, out PhazorStackVariant? _);
+
+        return ValueTask.FromResult(new PhazorSetParametersResult(StyleChanged: false, ClassChanged: classChanged));
+    }
 
     protected override void ConfigureClasses(CssClassBuilder builder)
     {

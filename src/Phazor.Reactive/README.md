@@ -196,3 +196,14 @@ AddPhazorReactiveFromMyReactiveApp, for My.Reactive.App)
 collection.AddPhazorReactive(reactive => reactive
     .AddPhazorReactiveFromMyReactiveApp());
 ```
+
+### PackageReference
+
+Ensure that you explicitly add reference to Generators project with `PrivateAssets="all"`, so your final Blazor
+application assemblies do not reference `Microsoft.CodeAnalysis` packages. Otherwise, your bundle size can increase up
+to 3-5 megabytes.
+
+```
+<PackageReference Include="Phazor.Reactive"/>
+<PackageReference Include="Phazor.Reactive.Generators" PrivateAssets="all"/>
+```

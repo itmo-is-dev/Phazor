@@ -4,6 +4,7 @@ namespace Phazor.Components.Tools;
 
 internal static class IdentifierGenerator
 {
+    private const string Encode32Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
     private const int IdLength = 13;
 
     private static readonly SpanAction<char, long> GenerateImplDelegate = GenerateImpl;
@@ -11,8 +12,6 @@ internal static class IdentifierGenerator
 
     private static void GenerateImpl(Span<char> buffer, long id)
     {
-        string Encode32Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
-
         // Accessing the last item in the beginning elides range checks for all the subsequent items.
         buffer[12] = Encode32Chars[(int)id & 31];
         buffer[0] = Encode32Chars[(int)(id >> 60) & 31];
