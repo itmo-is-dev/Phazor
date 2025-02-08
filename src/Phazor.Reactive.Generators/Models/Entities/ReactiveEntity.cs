@@ -12,6 +12,8 @@ public record ReactiveEntity(
     INamedTypeSymbol IdentifierType,
     IReadOnlyCollection<IReactiveProperty> Properties)
 {
+    private static readonly SyntaxToken DisposableFieldName = Identifier("_disposable");
+
     public string Name { get; } = GenerateTypeName(InterfaceType);
 
     public string FullyQualifiedName { get; } =
@@ -25,6 +27,7 @@ public record ReactiveEntity(
         MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax(context))
             .Prepend(GenerateIdentifierProperty())
             .Concat(GenerateIdentifierConstructor(context))
+            .Append(GenerateDisposableField())
             .Append(GenerateDisposeMethod())
             .Append(GenerateTypedEqualsMethod())
             .Append(GenerateUntypedEqualsMethod())
@@ -88,16 +91,36 @@ public record ReactiveEntity(
             .AddAccessorListAccessors(accessor);
     }
 
-    private MethodDeclarationSyntax GenerateDisposeMethod()
+    private FieldDeclarationSyntax GenerateDisposableField()
     {
-        return MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), "Dispose")
-            .AddModifiers(Token(SyntaxKind.PublicKeyword))
-            .AddBodyStatements(Properties.Select(GenerateDisposeInvocation).ToArray());
+        MemberAccessExpressionSyntax disposableEmpty = MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            IdentifierName(Constants.Disposable),
+            IdentifierName("Empty"));
+
+        EqualsValueClauseSyntax assignment = EqualsValueClause(disposableEmpty);
+        VariableDeclaratorSyntax declarator = VariableDeclarator(DisposableFieldName).WithInitializer(assignment);
+
+        VariableDeclarationSyntax declaration = VariableDeclaration(IdentifierName(Constants.IDisposable))
+            .AddVariables(declarator);
+
+        return FieldDeclaration(declaration).AddModifiers(Token(SyntaxKind.PrivateKeyword));
     }
 
-    private StatementSyntax GenerateDisposeInvocation(IReactiveProperty property)
+    private MethodDeclarationSyntax GenerateDisposeMethod()
     {
-        IdentifierNameSyntax fieldIdentifier = IdentifierName(property.BackingField.Name);
+        StatementSyntax[] invocations = Properties
+            .Select(prop => GenerateDisposeInvocation(IdentifierName(prop.BackingField.Name)))
+            .Append(GenerateDisposeInvocation(IdentifierName(DisposableFieldName)))
+            .ToArray();
+
+        return MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), "Dispose")
+            .AddModifiers(Token(SyntaxKind.PublicKeyword))
+            .AddBodyStatements(invocations);
+    }
+
+    private StatementSyntax GenerateDisposeInvocation(IdentifierNameSyntax fieldIdentifier)
+    {
         IdentifierNameSyntax methodIdentifier = IdentifierName("Dispose");
 
         MemberAccessExpressionSyntax memberAccess = MemberAccessExpression(

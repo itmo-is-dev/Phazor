@@ -54,4 +54,10 @@ public static class Constants
 
     public static readonly SyntaxToken CancellationTokenParameter =
         Identifier("System.Threading.CancellationToken");
+
+    public static readonly SyntaxToken Disposable =
+        Identifier("System.Reactive.Disposables.Disposable");
+
+    public static readonly SyntaxToken IDisposable =
+        Identifier("System.IDisposable");
 }
