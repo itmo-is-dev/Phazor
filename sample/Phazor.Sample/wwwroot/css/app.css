@@ -2,6 +2,19 @@ h1:focus {
     outline: none;
 }
 
+body,
+html {
+    position: fixed;
+}
+
+html {
+    overscroll-behavior: none;
+}
+
+body {
+    margin: 0;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

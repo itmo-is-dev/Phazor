@@ -1,0 +1,40 @@
+@using Phazor.Components.Extensions
+@using Phazor.Components.Models
+@using Phazor.Components.Tools
+@namespace Phazor.Components
+
+<div class="@_classFactory.Value">
+    @ChildContent
+</div>
+
+@code {
+
+    private readonly CssClassFactory _classFactory;
+
+    public PhazorScroll()
+    {
+        _classFactory = new CssClassFactory(BuildClasses);
+    }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public Direction Direction { get; set; } = Direction.Horizontal;
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetUpdatedValue(nameof(Direction), Direction, out _))
+            _classFactory.Invalidate();
+
+        return base.SetParametersAsync(parameters);
+    }
+
+    private CssClassBuilder BuildClasses(CssClassBuilder builder)
+    {
+        return builder
+            .AddWhen(Direction is Direction.Horizontal, "phazor-scroll-horizontal")
+            .AddWhen(Direction is Direction.Vertical, "phazor-scroll-vertical");
+    }
+
+}

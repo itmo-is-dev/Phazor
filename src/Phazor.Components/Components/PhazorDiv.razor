@@ -1,0 +1,19 @@
+@namespace Phazor.Components
+@using Phazor.Components.Tools
+@inherits PhazorComponent
+
+<div style="@ComputedStyle" class="@ComputedClass">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void ConfigureClasses(CssClassBuilder builder)
+    {
+        builder
+            .Add("phazor-div");
+    }
+}

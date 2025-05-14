@@ -1,10 +1,14 @@
 .phazor-stack-horizontal {
     display: flex;
     flex-direction: row;
-    
+
     .phazor-stack > & {
-        width: unset!important;
-        height: unset!important;
+        width: unset !important;
+        height: unset !important;
+    }
+
+    .phazor-scroll-horizontal > & {
+        width: fit-content !important;
     }
 
     &.phazor-stack-default {
@@ -49,7 +53,7 @@
     &.phazor-stack-align-end {
         align-items: end;
     }
-    
+
     &.phazor-stack-align-stretch {
         align-items: stretch;
     }

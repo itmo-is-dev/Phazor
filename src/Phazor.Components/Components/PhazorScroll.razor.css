@@ -1,0 +1,15 @@
+.phazor-scroll-horizontal {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: scroll;
+    flex-direction: row;
+    align-items: stretch
+}
+
+.phazor-scroll-vertical {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: scroll;
+    flex-direction: column;
+    align-items: stretch
+}

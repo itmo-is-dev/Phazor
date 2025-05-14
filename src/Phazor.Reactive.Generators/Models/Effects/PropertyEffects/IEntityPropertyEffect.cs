@@ -4,5 +4,5 @@ namespace Phazor.Reactive.Generators.Models.Effects.PropertyEffects;
 
 public interface IEntityPropertyEffect
 {
-    public IEnumerable<StatementSyntax> ToStatementSyntax(EffectGenerationContext context, EntityEffect entityEffect);
+    IEnumerable<StatementSyntax> ToStatementSyntax(EffectGenerationContext context, EntityEffect entityEffect);
 }

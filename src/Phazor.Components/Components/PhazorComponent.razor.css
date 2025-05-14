@@ -1,4 +1,11 @@
 .phazor-component {
     height: 100%;
     width: 100%;
+
+    .phazor-stack > & {
+        width: unset !important;
+        height: unset !important;
+        
+        flex-grow: 1;
+    }
 }

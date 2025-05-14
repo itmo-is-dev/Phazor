@@ -1,0 +1,60 @@
+@page "/Scroll"
+@attribute [PhazorSample("PhazorScroll")]
+@using Phazor.Components.Models
+@using Phazor.Sample.Tools
+
+<PhazorVStack Horizontal="HorizontalAlignment.Stretch" Style="margin: 5px" Gap="5px">
+
+    <button onclick="@OnNextHeight">
+        Next height
+    </button>
+
+    <PhazorHStack Style="@($"flex: 1 0 {HeaderHeight}")" Vertical="VerticalAlignment.Stretch" Gap="5px">
+
+        <PhazorDiv Style="background-color: blue"/>
+
+        <PhazorDiv Style="background-color: green"/>
+
+    </PhazorHStack>
+
+    <PhazorScroll Direction="Direction.Vertical">
+        <PhazorVStack Gap="5px" Horizontal="HorizontalAlignment.Stretch">
+            @for (var i = 0; i < 100; i++)
+            {
+                int localI = i;
+
+                <PhazorDiv Style="background-color: #3a3a3a; color: white">
+                    <div style="height: 100px; width: 100px">@localI</div>
+                </PhazorDiv>
+            }
+        </PhazorVStack>
+    </PhazorScroll>
+
+    <PhazorHStack Style="@($"flex: 1 0 {FooterHeight}")" Vertical="VerticalAlignment.Stretch" Gap="5px">
+
+        <PhazorDiv Style="background-color: green"/>
+
+        <PhazorDiv Style="background-color: blue"/>
+
+    </PhazorHStack>
+
+</PhazorVStack>
+
+
+@code {
+
+    private static readonly string[] HeaderHeights = ["60%", "40%", "20%"];
+    private static readonly string[] FooterHeights = ["10%", "20%", "30%"];
+
+    private int _heightIndex = 0;
+
+    private string HeaderHeight => HeaderHeights[_heightIndex % HeaderHeights.Length];
+    private string FooterHeight => FooterHeights[_heightIndex % FooterHeights.Length];
+
+    public void OnNextHeight()
+    {
+        _heightIndex++;
+        StateHasChanged();
+    }
+
+}
