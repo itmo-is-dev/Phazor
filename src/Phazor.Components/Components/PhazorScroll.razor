@@ -3,7 +3,7 @@
 @using Phazor.Components.Tools
 @namespace Phazor.Components
 
-<div class="@_classFactory.Value">
+<div class="@_classFactory.Value" id="@Id">
     @ChildContent
 </div>
 
@@ -15,6 +15,9 @@
     {
         _classFactory = new CssClassFactory(BuildClasses);
     }
+
+    [Parameter]
+    public string? Id { get; set; }
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

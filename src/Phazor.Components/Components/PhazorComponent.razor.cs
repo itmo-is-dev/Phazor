@@ -18,6 +18,9 @@ public abstract class PhazorComponent : ComponentBase, ICssClassDirector, ICssSt
 
     protected string ComputedStyle => _styleFactory.Value;
     protected string ComputedClass => _classFactory.Value;
+    
+    [Parameter]
+    public string? Id { get; set; }
 
     [Parameter]
     public string? Style { get; set; }

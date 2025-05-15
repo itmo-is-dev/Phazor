@@ -7,7 +7,7 @@
 @implements IDisposable
 @inject IJSRuntime Js
 
-<PhazorScroll Direction="ScrollDirection">
+<PhazorScroll Direction="ScrollDirection" Id="@_contentId">
     @ChildContent?.Invoke(_elements)
 
     @if (_isLoading)
@@ -81,7 +81,7 @@
             await Js.InvokeVoidAsync("Phazor.subscribeOnScrollFinished", _contentId, _reference);
         }
 
-        if (_isLoading is false 
+        if (_isLoading is false
             && (_state is null || Controller?.ShouldLoadNextPage(_state) is true)
             && await Js.InvokeAsync<bool>("Phazor.isContentFillingParent", _contentId) is false)
         {
