@@ -33,6 +33,7 @@
     private CssClassBuilder BuildClasses(CssClassBuilder builder)
     {
         return builder
+            .Add("phazor-scroll")
             .AddWhen(Direction is Direction.Horizontal, "phazor-scroll-horizontal")
             .AddWhen(Direction is Direction.Vertical, "phazor-scroll-vertical");
     }

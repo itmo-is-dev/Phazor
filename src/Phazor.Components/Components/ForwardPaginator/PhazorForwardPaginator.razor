@@ -1,21 +1,20 @@
 @using Microsoft.JSInterop
 @using Phazor.Components.Extensions
+@using Phazor.Components.Models
 @namespace Phazor.Components
 @typeparam TElement
 @typeparam TState
 @implements IDisposable
 @inject IJSRuntime Js
 
-<div style="width: 100%; height: 100%; overflow: scroll" id="@_contentId">
-
+<PhazorScroll Direction="ScrollDirection">
     @ChildContent?.Invoke(_elements)
 
     @if (_isLoading)
     {
         @Loader
     }
-
-</div>
+</PhazorScroll>
 
 @code {
 
@@ -45,6 +44,9 @@
 
     [Parameter]
     public RenderFragment? Loader { get; set; }
+
+    [Parameter]
+    public Direction ScrollDirection { get; set; } = Direction.Vertical;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
