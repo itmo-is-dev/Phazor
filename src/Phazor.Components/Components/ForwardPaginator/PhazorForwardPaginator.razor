@@ -106,7 +106,17 @@
         _isLoading = true;
         StateHasChanged();
 
-        ForwardPageLoadResult<TElement, TState> result = await Controller.LoadPageAsync(_state, _cts.Token);
+        ForwardPageLoadResult<TElement, TState> result;
+
+        try
+        {
+            result = await Controller.LoadPageAsync(_state, _cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            _isLoading = false;
+            return;
+        }
 
         _isLoading = false;
 
