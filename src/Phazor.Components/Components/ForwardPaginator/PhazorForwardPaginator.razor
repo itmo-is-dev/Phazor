@@ -22,8 +22,9 @@
     private readonly string _contentId;
 
     private CancellationTokenSource _cts;
+    private IDisposable? _controllerDisposable;
 
-    private List<TElement> _elements;
+    private readonly List<TElement> _elements;
     private TState? _state;
 
     private bool _isLoading;
@@ -33,7 +34,7 @@
         _reference = DotNetObjectReference.Create(this);
         _contentId = Guid.NewGuid().ToString();
         _cts = new CancellationTokenSource();
-        _elements = new List<TElement>();
+        _elements = [];
     }
 
     [Parameter]
@@ -50,15 +51,13 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        if (parameters.TryGetUpdatedValue(nameof(Controller), Controller, out _))
+        // ReSharper disable once SuggestVarOrType_Elsewhere
+        if (parameters.TryGetUpdatedValue(nameof(Controller), Controller, out var controller))
         {
-            _state = default;
-            _elements.Clear();
+            _controllerDisposable?.Dispose();
+            _controllerDisposable = controller.Changed.Subscribe(_ => OnControllerChanged());
 
-            _cts.Cancel();
-            _cts.Dispose();
-
-            _cts = new CancellationTokenSource();
+            OnControllerChanged();
         }
 
         await base.SetParametersAsync(parameters);
@@ -115,6 +114,17 @@
         _state = result.State;
 
         StateHasChanged();
+    }
+
+    private void OnControllerChanged()
+    {
+        _state = default;
+        _elements.Clear();
+
+        _cts.Cancel();
+        _cts.Dispose();
+
+        _cts = new CancellationTokenSource();
     }
 
 }
