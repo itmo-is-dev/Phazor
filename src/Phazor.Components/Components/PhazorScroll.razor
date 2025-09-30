@@ -3,17 +3,19 @@
 @using Phazor.Components.Tools
 @namespace Phazor.Components
 
-<div class="@_classFactory.Value" id="@Id">
+<div class="@_classFactory.Value" style="@_styleFactory.Value" id="@Id">
     @ChildContent
 </div>
 
 @code {
 
     private readonly CssClassFactory _classFactory;
+    private readonly CssStyleFactory _styleFactory;
 
     public PhazorScroll()
     {
         _classFactory = new CssClassFactory(BuildClasses);
+        _styleFactory = new CssStyleFactory(BuildStyles);
     }
 
     [Parameter]
@@ -25,18 +27,38 @@
     [Parameter]
     public Direction Direction { get; set; } = Direction.Horizontal;
 
+    [Parameter]
+    public string? Style { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
     public override Task SetParametersAsync(ParameterView parameters)
     {
-        if (parameters.TryGetUpdatedValue(nameof(Direction), Direction, out _))
+        if (parameters.TryGetUpdatedValue(Direction, out _) || parameters.TryGetUpdatedValue(Class, out _))
+        {
             _classFactory.Invalidate();
+        }
+
+        if (parameters.TryGetUpdatedValue(Style, out _))
+        {
+            _styleFactory.Invalidate();
+        }
 
         return base.SetParametersAsync(parameters);
+    }
+
+    private CssStyleBuilder BuildStyles(CssStyleBuilder builder)
+    {
+        return builder
+            .AddWhenNotNull(Style);
     }
 
     private CssClassBuilder BuildClasses(CssClassBuilder builder)
     {
         return builder
             .Add("phazor-scroll")
+            .AddWhenNotNull(Class)
             .AddWhen(Direction is Direction.Horizontal, "phazor-scroll-horizontal")
             .AddWhen(Direction is Direction.Vertical, "phazor-scroll-vertical");
     }
