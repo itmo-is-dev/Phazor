@@ -19,8 +19,6 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
     public IReadOnlyCollection<ReactiveEntity> Entities => _entities;
     public IReadOnlyCollection<ReactiveEvent> Events => _events;
 
-    public SyntaxNode? Node { get; private set; }
-
     public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
         if (context.Node is InterfaceDeclarationSyntax interfaceSyntax)
@@ -29,7 +27,6 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
         }
         else if (context.Node is TypeDeclarationSyntax typeSyntax)
         {
-            Node = context.Node;
             HandleTypeDeclaration(typeSyntax, context);
         }
     }
@@ -260,12 +257,24 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
         INamedTypeSymbol? enumerableGenericInterface = context.SemanticModel.Compilation
             .GetTypeByMetadataName(Constants.EnumerableMetadataName);
 
-        if (observableGenericInterface is null || enumerableGenericInterface is null)
+        INamedTypeSymbol? ignoreAttribute = context.SemanticModel.Compilation
+            .GetTypeByMetadataName(Constants.PhazorIgnoreAttributeMetadataName);
+
+        if (observableGenericInterface is null || enumerableGenericInterface is null || ignoreAttribute is null)
+        {
             yield break;
+        }
 
         foreach (IPropertySymbol property in properties)
         {
             if (property.Type is not INamedTypeSymbol propertyType)
+                continue;
+
+            bool hasIgnoreAttribute = property
+                .GetAttributes()
+                .Any(attr => attr.AttributeClass?.EqualsDefault(ignoreAttribute) is true);
+
+            if (hasIgnoreAttribute)
                 continue;
 
             if (propertyType.ConstructedFrom.EqualsDefault(observableGenericInterface) is false)
