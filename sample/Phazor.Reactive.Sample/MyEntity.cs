@@ -1,3 +1,4 @@
+using Phazor.Extensions;
 using Phazor.Reactive.Sample.Inner;
 using System;
 
@@ -7,7 +8,7 @@ internal partial class MyEntity
 {
     private readonly IServiceProvider _provider;
 
-    public MyEntity(long id, IServiceProvider provider,  IInnerEntityFactory entityFactory)
+    public MyEntity(long id, IServiceProvider provider, IInnerEntityFactory entityFactory)
     {
         Id = id;
         _provider = provider;

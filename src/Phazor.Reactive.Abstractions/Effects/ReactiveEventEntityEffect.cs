@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 
+// ReSharper disable once CheckNamespace
 namespace Phazor.Reactive.Abstractions;
 
 public abstract class ReactiveEventEntityEffect<TEvent, TEntity, TId>
@@ -13,4 +14,7 @@ public abstract class ReactiveEventEntityEffect<TEvent, TEntity, TId>
 
     public abstract ReactiveEventCollectionPropertyEffect<TEvent, TElement> AndItsProperty<TElement>(
         Expression<Func<TEntity, IObservable<IEnumerable<TElement>>>> expression);
+
+    public abstract ReactiveEventValuePropertyEffect<TEvent, TProperty> AndItsProperty<TProperty>(
+        Expression<Func<TEntity, TProperty>> expression);
 }

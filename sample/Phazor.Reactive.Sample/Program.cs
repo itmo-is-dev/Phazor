@@ -22,7 +22,7 @@ IMyEntity entity = factory.Create(id);
 using IDisposable _ = entity.Collection.Subscribe(x => Console.WriteLine(string.Join(", ", x)));
 using IDisposable _1 = eventProvider.Observe<MyEvent>().Subscribe(Console.WriteLine);
 
-var evt = new MyEvent(id, 1);
+var evt = new MyEvent(id, 1, Guid.NewGuid());
 await publisher.PublishAsync(evt, default);
 await publisher.PublishAsync(evt, default);
 await publisher.PublishAsync(evt, default);

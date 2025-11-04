@@ -1,3 +1,4 @@
+// ReSharper disable once CheckNamespace
 namespace Phazor.Reactive.Abstractions;
 
 public abstract class ReactiveEventHandler<TEvent>

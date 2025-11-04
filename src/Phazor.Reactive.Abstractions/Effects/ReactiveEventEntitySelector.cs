@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 
+// ReSharper disable once CheckNamespace
 namespace Phazor.Reactive.Abstractions;
 
 public abstract class ReactiveEventEntitySelector<TEvent, TEntity, TId>

@@ -18,7 +18,7 @@
     <PropertyGroup>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Fixed generic parameter generation
+            Added value property generation
         </PackageReleaseNotes>
     </PropertyGroup>
 
@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Phazor.Extensions\Phazor.Extensions.csproj" />
         <ProjectReference Include="..\Phazor.Reactive.Abstractions\Phazor.Reactive.Abstractions.csproj"/>
         <ProjectReference Include="..\Phazor.Reactive.Generators\Phazor.Reactive.Generators.csproj"/>
     </ItemGroup>

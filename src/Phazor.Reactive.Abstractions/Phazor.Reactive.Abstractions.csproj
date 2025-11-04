@@ -3,6 +3,7 @@
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NoWarn>$(NoWarn);IDE0130;</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -17,7 +18,7 @@
     <PropertyGroup>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Added Phazor.Reactive abstractions
+            Added value property generation
         </PackageReleaseNotes>
     </PropertyGroup>
 

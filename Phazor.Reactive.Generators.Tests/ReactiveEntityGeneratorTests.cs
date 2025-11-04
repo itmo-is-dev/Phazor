@@ -22,6 +22,7 @@ public class ReactiveEntityGeneratorTests : GeneratorTestBase<ReactiveEntityGene
              
              public interface IMyEntity : IReactiveEntity<long>
              {
+                 int IntValue { get; }
                  IObservable<int> Value { get; }
                  IObservable<IEnumerable<int>> Collection { get; }
              }

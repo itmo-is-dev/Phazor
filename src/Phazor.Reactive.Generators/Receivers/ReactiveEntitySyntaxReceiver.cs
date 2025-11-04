@@ -50,18 +50,9 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
         if (reactiveEntityInterface?.TypeArguments is not [INamedTypeSymbol identifierType])
             return;
 
-        INamedTypeSymbol? observableGenericInterface = context.SemanticModel.Compilation
-            .GetTypeByMetadataName(Constants.ObservableMetadataName);
-
-        if (observableGenericInterface is null)
-            return;
-
         IEnumerable<IPropertySymbol> observableProperties = interfaceSymbol
             .GetMembers()
-            .OfType<IPropertySymbol>()
-            .Where(x =>
-                x.Type is INamedTypeSymbol namedTypeSymbol
-                && namedTypeSymbol.ConstructedFrom.EqualsDefault(observableGenericInterface));
+            .OfType<IPropertySymbol>();
 
         IReactiveProperty[] reactiveProperties = ParseProperties(observableProperties, context).ToArray();
 
@@ -135,40 +126,56 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
         if (effectRoot.Parent is not IInvocationOperation idSelectorOperation)
             return false;
 
-        if (EntityEffect.TryGetIdentifierSelectorLambda(idSelectorOperation, out SimpleLambdaExpressionSyntax? idSelectorLambda) is false)
+        if (EntityEffect.TryGetIdentifierSelectorLambda(idSelectorOperation,
+                out SimpleLambdaExpressionSyntax? idSelectorLambda) is false)
+        {
             return false;
+        }
 
         if (idSelectorOperation.Parent is not IInvocationOperation propertySelectorOperation)
             return false;
 
-        if (EntityEffect.TryGetProperty(propertySelectorOperation, out IPropertyReferenceOperation? propertyReferenceOperation) is false)
+        if (EntityEffect.TryGetProperty(propertySelectorOperation,
+                out IPropertyReferenceOperation? propertyReferenceOperation) is false)
+        {
             return false;
+        }
 
         INamedTypeSymbol? enumerableGenericSymbol = context.SemanticModel.Compilation
             .GetTypeByMetadataName(Constants.EnumerableMetadataName);
 
-        if (enumerableGenericSymbol is null)
+        INamedTypeSymbol? observableGenericSymbol = context.SemanticModel.Compilation
+            .GetTypeByMetadataName(Constants.ObservableMetadataName);
+
+        if (enumerableGenericSymbol is null || observableGenericSymbol is null)
             return false;
 
-        if (propertyReferenceOperation.Property.Type is not INamedTypeSymbol propertyObservableType)
-            return false;
-
-        if (propertyObservableType.TypeArguments is not [INamedTypeSymbol propertyValueType])
+        if (propertyReferenceOperation.Property.Type is not INamedTypeSymbol propertyType)
             return false;
 
         IEntityPropertyEffect? propertyEffect;
 
-        if (propertyValueType.ConstructedFrom.EqualsDefault(enumerableGenericSymbol))
+        if (propertyType.ConstructedFrom.EqualsDefault(observableGenericSymbol))
         {
-            TryParseCollectionPropertyEffect(
-                context.SemanticModel.Compilation,
-                propertySelectorOperation,
-                propertyReferenceOperation,
-                out propertyEffect);
+            if (propertyType.TypeArguments is not [INamedTypeSymbol propertyValueType])
+                return false;
+
+            if (propertyValueType.ConstructedFrom.EqualsDefault(enumerableGenericSymbol))
+            {
+                TryParseCollectionPropertyEffect(
+                    context.SemanticModel.Compilation,
+                    propertySelectorOperation,
+                    propertyReferenceOperation,
+                    out propertyEffect);
+            }
+            else
+            {
+                TryParsePropertyEffect(propertySelectorOperation, propertyReferenceOperation, out propertyEffect);
+            }
         }
         else
         {
-            TryParsePropertyEffect(propertySelectorOperation, propertyReferenceOperation, out propertyEffect);
+            TryParseValuePropertyEffect(propertySelectorOperation, propertyReferenceOperation, out propertyEffect);
         }
 
         if (propertyEffect is null)
@@ -212,27 +219,62 @@ public class ReactiveEntitySyntaxReceiver : ISyntaxContextReceiver
         if (propertySelectorOperation.Parent is not IInvocationOperation actionOperation)
             return;
 
-        if (CollectionPropertyEffect.TryGetEffectAction(actionOperation, compilation, out Models.Effects.CollectionEffectActions.ICollectionEffectAction? action) is false)
+        if (CollectionPropertyEffect.TryGetEffectAction(actionOperation,
+                compilation,
+                out Models.Effects.CollectionEffectActions.ICollectionEffectAction? action) is false)
+        {
             return;
+        }
 
         effect = new CollectionPropertyEffect(
             propertyReferenceOperation.Property,
             action);
     }
 
+    private void TryParseValuePropertyEffect(
+        IInvocationOperation propertySelectorOperation,
+        IPropertyReferenceOperation propertyReferenceOperation,
+        [NotNullWhen(true)] out IEntityPropertyEffect? effect)
+    {
+        effect = null;
+
+        if (propertySelectorOperation.Parent is not IInvocationOperation changeToOperation)
+            return;
+
+        if (changeToOperation.Arguments is not
+            [{ Syntax: ArgumentSyntax { Expression: SimpleLambdaExpressionSyntax valueLambda } }])
+        {
+            return;
+        }
+
+        effect = new ValuePropertyEffect(propertyReferenceOperation.Property, valueLambda);
+    }
+
     private IEnumerable<IReactiveProperty> ParseProperties(
         IEnumerable<IPropertySymbol> properties,
         GeneratorSyntaxContext context)
     {
+        INamedTypeSymbol? observableGenericInterface = context.SemanticModel.Compilation
+            .GetTypeByMetadataName(Constants.ObservableMetadataName);
+
         INamedTypeSymbol? enumerableGenericInterface = context.SemanticModel.Compilation
             .GetTypeByMetadataName(Constants.EnumerableMetadataName);
 
-        if (enumerableGenericInterface is null)
+        if (observableGenericInterface is null || enumerableGenericInterface is null)
             yield break;
 
         foreach (IPropertySymbol property in properties)
         {
-            ITypeSymbol typeSymbolUntyped = ((INamedTypeSymbol)property.Type).TypeArguments.Single();
+            if (property.Type is not INamedTypeSymbol propertyType)
+                continue;
+
+            if (propertyType.ConstructedFrom.EqualsDefault(observableGenericInterface) is false)
+            {
+                yield return new ReactiveValueProperty(property, propertyType);
+                continue;
+            }
+
+            ITypeSymbol typeSymbolUntyped = propertyType.TypeArguments.Single();
 
             if (typeSymbolUntyped is not INamedTypeSymbol typeSymbol)
                 continue;

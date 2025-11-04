@@ -25,7 +25,7 @@
     <PropertyGroup>
         <Version>1.0.$(PatchVersion)</Version>
         <PackageReleaseNotes>
-            Fixed factories injecting other factories
+            Added value property generation
         </PackageReleaseNotes>
     </PropertyGroup>
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Phazor.Reactive.Sample;
 
-public record MyEvent(long Id, int Value) : IReactiveEvent<MyEvent>
+public record MyEvent(long Id, int Value, Guid GuidValue) : IReactiveEvent<MyEvent>
 {
     public IEnumerable<int> Values { get; } = [Value];
 
@@ -20,5 +20,11 @@ public record MyEvent(long Id, int Value) : IReactiveEvent<MyEvent>
             .SelectedBy(x => x.Id)
             .AndItsProperty(x => x.Value)
             .ByChangingTo(x => x.Value);
+
+        handler
+            .Affects<IMyEntity, long>()
+            .SelectedBy(x => x.Id)
+            .AndItsProperty(x => x.GuidValue)
+            .ByChangingTo(x => x.GuidValue);
     }
 }

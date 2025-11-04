@@ -24,7 +24,8 @@ public record ReactiveEntity(
 
     public TypeDeclarationSyntax ToSyntax(GeneratorExecutionContext context)
     {
-        MemberDeclarationSyntax[] members = Properties.SelectMany(x => x.ToMemberSyntax(context))
+        MemberDeclarationSyntax[] members = Properties
+            .SelectMany(x => x.ToMemberSyntax(context))
             .Prepend(GenerateIdentifierProperty())
             .Concat(GenerateIdentifierConstructor(context))
             .Append(GenerateDisposableField())
@@ -110,7 +111,9 @@ public record ReactiveEntity(
     private MethodDeclarationSyntax GenerateDisposeMethod()
     {
         StatementSyntax[] invocations = Properties
-            .Select(prop => GenerateDisposeInvocation(IdentifierName(prop.BackingField.Name)))
+            .Select(prop => prop.BackingField)
+            .Where(field => field.IsDisposable)
+            .Select(field => GenerateDisposeInvocation(IdentifierName(field.Name)))
             .Append(GenerateDisposeInvocation(IdentifierName(DisposableFieldName)))
             .ToArray();
 

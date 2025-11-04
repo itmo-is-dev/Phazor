@@ -19,7 +19,7 @@ public record CollectionPropertyEffect(IPropertySymbol Property, ICollectionEffe
         IdentifierNameSyntax eventIdentifier = IdentifierName("evt");
 
         EntityFactory factory = context.GetFactory(entityEffect.EntityType);
-        Entities.ReactiveEntity entity = context.GetEntity(entityEffect.EntityType);
+        ReactiveEntity entity = context.GetEntity(entityEffect.EntityType);
         IReactiveProperty property = entity.GetProperty(Property);
 
         IdentifierNameSyntax entityFullIdentifier = IdentifierName(entity.FullyQualifiedName);
