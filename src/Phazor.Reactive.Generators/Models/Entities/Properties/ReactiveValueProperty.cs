@@ -36,6 +36,7 @@ public sealed record ReactiveValueProperty(IPropertySymbol Property, INamedTypeS
         yield return PropertyDeclaration(propertyType, propertyName)
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
             .AddAccessorListAccessors(getAccessor, setAccessor)
-            .WithInitializer(defaultValue);
+            .WithInitializer(defaultValue)
+            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
     }
 }
