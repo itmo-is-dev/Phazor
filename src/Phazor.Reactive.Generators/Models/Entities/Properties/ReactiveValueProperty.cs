@@ -26,8 +26,16 @@ public sealed record ReactiveValueProperty(IPropertySymbol Property, INamedTypeS
             .AddModifiers(Token(SyntaxKind.InternalKeyword))
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
 
+        EqualsValueClauseSyntax defaultValue = EqualsValueClause(
+            PostfixUnaryExpression(
+                SyntaxKind.SuppressNullableWarningExpression,
+                LiteralExpression(
+                    SyntaxKind.DefaultLiteralExpression,
+                    Token(SyntaxKind.DefaultKeyword))));
+
         yield return PropertyDeclaration(propertyType, propertyName)
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
-            .AddAccessorListAccessors(getAccessor, setAccessor);
+            .AddAccessorListAccessors(getAccessor, setAccessor)
+            .WithInitializer(defaultValue);
     }
 }
