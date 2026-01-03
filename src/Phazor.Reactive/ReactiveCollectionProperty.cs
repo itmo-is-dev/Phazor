@@ -73,6 +73,6 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
 
     private void Publish()
     {
-        _subject.OnNext(_collectionModifier.Apply(_values));
+        _subject.OnNext(_collectionModifier.Apply(_values).ToArray());
     }
 }
