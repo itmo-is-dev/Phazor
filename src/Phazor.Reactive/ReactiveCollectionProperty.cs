@@ -4,7 +4,7 @@ namespace Phazor.Reactive;
 
 public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
 {
-    private readonly List<T> _values = [];
+    private readonly HashSet<T> _values = [];
     private readonly ReplaySubject<IEnumerable<T>> _subject = new(1);
 
     public IDisposable Subscribe(IObserver<IEnumerable<T>> observer)
@@ -21,7 +21,11 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
 
     public void Add(IEnumerable<T> values)
     {
-        _values.AddRange(values);
+        foreach (T value in values)
+        {
+            _values.Add(value);
+        }
+
         _subject.OnNext(_values);
     }
 
@@ -50,7 +54,11 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
     public void ReplaceBy(IEnumerable<T> values)
     {
         _values.Clear();
-        _values.AddRange(values);
+
+        foreach (T value in values)
+        {
+            _values.Add(value);
+        }
 
         _subject.OnNext(_values);
     }
