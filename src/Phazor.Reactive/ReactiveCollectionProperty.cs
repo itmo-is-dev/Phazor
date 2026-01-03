@@ -1,3 +1,4 @@
+using Phazor.Reactive.CollectionModifiers;
 using System.Reactive.Subjects;
 
 namespace Phazor.Reactive;
@@ -6,6 +7,7 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
 {
     private readonly HashSet<T> _values = [];
     private readonly ReplaySubject<IEnumerable<T>> _subject = new(1);
+    private readonly ICollectionModifier<T> _collectionModifier = CollectionModifierFactory.Create<T>();
 
     public IDisposable Subscribe(IObserver<IEnumerable<T>> observer)
         => _subject.Subscribe(observer);
@@ -16,7 +18,7 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
     public void Add(T value)
     {
         _values.Add(value);
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void Add(IEnumerable<T> values)
@@ -26,13 +28,13 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
             _values.Add(value);
         }
 
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void Remove(T value)
     {
         _values.Remove(value);
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void Remove(IEnumerable<T> values)
@@ -40,7 +42,7 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
         foreach (T value in values)
             _values.Remove(value);
 
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void ReplaceBy(T value)
@@ -48,7 +50,7 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
         _values.Clear();
         _values.Add(value);
 
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void ReplaceBy(IEnumerable<T> values)
@@ -60,12 +62,17 @@ public class ReactiveCollectionProperty<T> : IReactiveCollectionProperty<T>
             _values.Add(value);
         }
 
-        _subject.OnNext(_values);
+        Publish();
     }
 
     public void Clear()
     {
         _values.Clear();
-        _subject.OnNext(_values);
+        Publish();
+    }
+
+    private void Publish()
+    {
+        _subject.OnNext(_collectionModifier.Apply(_values));
     }
 }
