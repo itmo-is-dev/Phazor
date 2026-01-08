@@ -53,4 +53,8 @@
         <Folder Include="wwwroot\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Phazor.Extensions\Phazor.Extensions.csproj" />
+    </ItemGroup>
+
 </Project>

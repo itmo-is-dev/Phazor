@@ -1,12 +1,21 @@
+using System.Diagnostics.CodeAnalysis;
+
 #pragma warning disable IDE0130
 // ReSharper disable once CheckNamespace
 namespace Phazor.Extensions;
 
 public static class DisposableExtensions
 {
-    public static IDisposable Combine(this IDisposable disposable, IDisposable other)
+    [return: NotNullIfNotNull(nameof(disposable))]
+    public static IDisposable? Combine(this IDisposable? disposable, IDisposable? other)
     {
-        return new CombinedDisposable(disposable, other);
+        return (disposable, other) switch
+        {
+            (null, null) => null,
+            (not null, null) => disposable,
+            (null, not null) => other,
+            _ => new CombinedDisposable(disposable, other),
+        };
     }
 
 #pragma warning disable CA1045

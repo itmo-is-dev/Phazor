@@ -1,7 +1,9 @@
 @namespace Phazor.Components
+@using System.Reactive
 @using Microsoft.Extensions.Options
 @using Phazor.Components.Tools
 @using Microsoft.Extensions.Logging
+@using Phazor.Extensions
 @typeparam T
 @inject IOptionsMonitor<PhazorComponentsOptions> Options
 @inject ILogger<PhazorReactiveNullableValue<T>> Logger
@@ -26,28 +28,31 @@
     [Parameter]
     public EventCallback<T>? ValueChanged { get; set; }
 
+    [Parameter]
+    public IObservable<Unit>? ChangeToken { get; set; }
+
     protected override void OnParametersSet()
     {
         _disposable?.Dispose();
 
-        var options = Options.CurrentValue;
-
         _disposable = Value?.Subscribe(x =>
         {
-            if (options.Trace)
+            if (Options.CurrentValue.Trace)
             {
                 Logger.LogInformation(
                     "PhazorReactiveNullableValue<{Type}> received value = {Value}",
                     typeof(T).Name,
                     x);
             }
-            
+
             _value = x;
 
             ValueChanged?.InvokeAsync(x);
 
             StateHasChanged();
         });
+
+        _disposable = _disposable.Combine(ChangeToken?.Subscribe(_ => StateHasChanged()));
     }
 
 }
