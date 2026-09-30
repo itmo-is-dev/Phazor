@@ -7,7 +7,7 @@
 @typeparam T
 @implements IDisposable
 @inject IOptionsMonitor<PhazorComponentsOptions> Options
-@inject ILogger<PhazorBinding<T>> Logger
+@inject ILogger<PhazorInlineSubject<T>> Logger
 
 @if (ChildContent is not null)
 {

@@ -1,8 +1,8 @@
-@page "/Binding"
+@page "/InlineSubject"
 @using Phazor.Sample.Tools
-@attribute [PhazorSample("PhazorBinding")]
+@attribute [PhazorSample("InlineSubject")]
 
-<PhazorBinding T="bool" Context="subject">
+<PhazorInlineSubject T="bool" Context="subject">
 
     <button onclick="@(() => subject.OnNext(true))">
         Show
@@ -22,4 +22,4 @@
 
     </PhazorReactiveValue>
 
-</PhazorBinding>
+</PhazorInlineSubject>
