@@ -1,0 +1,53 @@
+@namespace Phazor.Components
+@using System.Diagnostics.CodeAnalysis
+@using Phazor.Components.Extensions
+@typeparam T
+@implements IDisposable
+
+
+@code {
+
+    private IDisposable? _disposable;
+
+    [Parameter, EditorRequired, NotNull]
+    public IObservable<T>? From { get; set; }
+
+    [Parameter]
+    public T? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<T?> ValueChanged { get; set; }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetUpdatedValue(From, out IObservable<T>? updatedFrom))
+        {
+            _disposable?.Dispose();
+            _disposable = null;
+
+            if (Equals(Value, default) is false)
+            {
+                OnValueChanged(default);
+            }
+
+            _disposable = updatedFrom.Subscribe(OnValueChanged);
+        }
+
+        return base.SetParametersAsync(parameters);
+    }
+
+    public void Dispose()
+    {
+        _disposable?.Dispose();
+    }
+
+    private void OnValueChanged(T? value)
+    {
+        if (Equals(Value, value))
+            return;
+
+        Value = value;
+        InvokeAsync(() => ValueChanged.InvokeAsync(value));
+    }
+
+}
